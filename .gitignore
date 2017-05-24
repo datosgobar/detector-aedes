@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Config files
+config.yml
+
+# Drafts and tests
+prototipado
+
+#Temp notebook files
+*checkpoint.ipynb

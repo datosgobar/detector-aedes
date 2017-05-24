@@ -1,0 +1,37 @@
+odk:
+  URL_ENTRIES: 'http://ODKHOST/view/submissionList',
+  URL_BINARYDATA: 'http://ODKHOST/view/binaryData',
+  BLOBKEY_BASE: 'TABLE_ID[@version=null and @uiVersion=null]/data[@key=%s]/RESOURCE_NAME'
+
+images:
+  patch_dir: '/carpeta/con/recortes/del/bajalenguas'
+  default_input_dir: ''
+  output_dir: ''
+
+model:
+  default_dir: None
+
+stick:
+  geometry: # Caracteristicas geometricas del bajalenguas
+    - 4.55 # Proporcion: eje_mayor / eje_menor
+    - 0.754 # Proporcion: area / (eje_mayor * eje_menor)
+    - 0.24 # Fraccion del area de la foto
+  geometry-weights:  # Importancia de cada una de las caracteristicas
+    - 1.0
+    - 1.0
+    - 0.5
+  max-hu: 4 # Orden maximo a usar de los hu-moments
+  hu-moments: # Hu moments para un bajalenguas prototipo
+    - 3.96001763e-01
+    - 1.29347824e-01
+    - 1.86442906e-04
+    - 8.63794569e-05
+    - 1.09570633e-08
+    - 3.09960685e-05
+    - 3.27970603e-10
+
+eggs:
+  geometry:
+    major_axis: 0.0112 # Expresado en proporcion al ancho del bajalenguas
+    minor_axis: 0.00558 # Expresado en proporcion al ancho del bajalenguas
+  tolerance: 50 # Se toleran variaciones de +- 50%
