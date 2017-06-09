@@ -15,30 +15,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import warnings
-import pickle
-import yaml
-
-# Para el procesamiento de imagenes
-from skimage import io
-from skimage import transform
-from skimage.color import rgb2gray, rgb2hsv
-from skimage.measure import regionprops
-from skimage import feature
-from skimage.transform import resize, rotate
-from skimage.filters import threshold_otsu
-from skimage import segmentation
-from skimage.future import graph
-from skimage import morphology
-from skimage import measure
-from sklearn.metrics import pairwise_distances
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score
-
-base_path = os.path.dirname(os.path.realpath(__file__))
-
-with open(os.path.join(base_path, "config.yml"), 'r') as ymlfile:
-    cfg = yaml.load(ymlfile)
-cfg_images = cfg['images']
+from analyzers import StickAnalizerHough, EllipseFinder
 
 
 class AedesDetector():
@@ -55,13 +32,14 @@ class AedesDetector():
                 análisis.
     """
 
-    def __init__(self, input_connector, output_connector):
+    def __init__(self, input_connector, output_connector=None):
         self.input_connector = input_connector
         self.output_connector = output_connector
-        self.stick_analizer = StickAnalizer()
-        self.egg_finder = EggFinder()
+        self.stick_analizer = StickAnalizerHough()
+        self.egg_finder = EllipseFinder()
 
-    def process(self, image_id=None, show_results=False, start_from=0):
+    def process(self, image_id=None, show_results=False, start_from=0,
+                ):
         """Función principal para procesar las imágenes disponibles.
 
         `process(self, image_id=None, show_results=False, start_from=0)`
@@ -82,6 +60,7 @@ class AedesDetector():
         else:
             image_ids = self.input_connector.get_image_ids()
             for image_id in image_ids[start_from:]:
+                print('Procesando {:s}'.format(image_id))
                 self._process_one_image(image_id)
                 if show_results:
                     self.plot_classification()
@@ -95,13 +74,43 @@ class AedesDetector():
 
         """
         image = self.input_connector.get_image(image_id)
+        self.image = image
         if image is None:
             warnings.warn("La imagen {:s} no pudo ser cargada"
                           .format(image_id))
         self.stick_analizer.set_current_image(image)
-        self.clipped_image = self.stick_analizer.get_clipped_image()
-        self.egg_finder.find_in(self.clipped_image)
-        self.egg_finder.classify()
+        stick_status, limits = self.stick_analizer.get_limits()
+        self.stick_status = stick_status
+        if stick_status != 'Sin bajalenguas':
+            finder_status, egg_props = self.egg_finder.find_in(image, limits=limits,
+                                                         show_settings=True)
+            self.finder_status = finder_status
+            if finder_status == 'Status OK':
+                self.classify(egg_props, method='Thresholds')
+                egg_count = self.count_eggs()
+                self.egg_props = egg_props
+            else:
+                egg_count = None
+            self.output_connector.write_output(image_id,
+                                               stick_status + ' / ' + finder_status,
+                                               egg_count)
+            print(egg_count)
+        else:
+            print(stick_status)
+            self.output_connector.write_output(image_id,
+                                               stick_status,
+                                               None)
+
+    def classify(self, out, method='Threshods'):
+        # TODO :Filtrar las que quedan fuera del bajalenguas (por fuera de las rectas)
+        all_real_centroids, egg_counts, all_corrs, \
+            all_contrasts, all_aspects = out
+        self.good_points = (np.array(all_corrs) > 0.8) & (np.array(all_contrasts) > 0.3)
+        self.egg_counts = np.array(egg_counts)
+
+    def count_eggs(self):
+        total_eggs = np.sum(self.egg_counts[self.good_points])
+        return total_eggs
 
     def test_stick_algorithm(self):
         # Viejo! Necesita ser refactoreado
@@ -157,6 +166,12 @@ class AedesDetector():
 
     def plot_classification(self):
         "Graficar la clasificacion par una dada imágen"
+        if self.stick_status == 'Sin bajalenguas':
+            print("No puedo graficar: " + self.stick_status)
+            return
+        if self.finder_status != 'Status OK':
+            print("No puedo graficar: " + self.finder_status)
+            return
         if not hasattr(self, 'fig'):
             self.fig = plt.figure()
             self.fig.canvas.mpl_connect('key_press_event',
@@ -166,16 +181,13 @@ class AedesDetector():
         self.next_figure = False
         self.fig.clf()
         ax = self.fig.add_subplot(111)
-        ax.imshow(self.clipped_image)
-        ax.imshow(self.egg_finder.mask, alpha=0.5)
-        ax.scatter(self.egg_finder.measures[self.egg_finder.classes == 0, -2],
-                   self.egg_finder.measures[self.egg_finder.classes == 0, -1],
-                   facecolors='none', s=80, alpha=0.5,
+        ax.set_title('Presione N para continuar analizando la proxima foto.')
+        ax.imshow(self.image)
+        centers = np.vstack(self.egg_props[0])
+        ax.scatter(centers[self.good_points, 1],
+                   centers[self.good_points, 0],
+                   s=80, marker='x',
                    color='g')
-        ax.scatter(self.egg_finder.measures[self.egg_finder.classes == 1, -2],
-                   self.egg_finder.measures[self.egg_finder.classes == 1, -1],
-                   facecolors='none', s=80, alpha=0.5,
-                   color='r')
         self.fig.canvas.draw()
         while not self.next_figure:
             self.fig.waitforbuttonpress()
@@ -220,305 +232,3 @@ class AedesDetector():
             self.fig.canvas.draw()
         self.egg_finder.push_user_input(self.egg_finder.measures,
                                         self.temp_targets)
-
-
-class StickAnalizer():
-
-    def __init__(self, lowres_width=100, target_size=0.5):
-        self.lowres_width = lowres_width
-        self.target_size = target_size
-        self._load_patches()
-
-    def set_current_image(self, image):
-        orig_size = image.shape[0:2]
-        self.scale = (orig_size[1] / self.lowres_width)
-        new_size = np.array(orig_size) / self.scale
-        image_lowres = transform.resize(image, new_size)
-        self.curr_im = image
-        self.curr_im_lowres = image_lowres
-        self.curr_im_lowres_g = rgb2gray(image_lowres)
-
-    def get_clipped_image(self):
-        self._find_stick()
-        return self.curr_im
-
-    def _find_stick(self):
-
-        mask1, disp1, angle1 = self.polish_mask(
-            self.binary_by_colors(self.curr_im_lowres,
-                                  self.target_colors,
-                                  thresh=0.2))
-        mask2, disp2, angle2 = self.polish_mask(
-            self.binary_by_edges(self.curr_im_lowres_g))
-        mask3, disp3, angle3 = self.polish_mask(
-            self.binary_by_thresholding(self.curr_im_lowres_g))
-
-        # Eligo el metodo que da menor disparidad
-        disparities = [disp1, disp2, disp3]
-        masks = [mask1, mask2, mask3]
-        angles = [angle1, angle2, angle3]
-        idx_min_disp = np.argmin(disparities)
-        binary_image = masks[idx_min_disp]
-        orientation = angles[idx_min_disp]
-
-        # Roto la imagen y la mascara
-        binary_image = resize(binary_image, self.curr_im.shape[:2])
-        binary_image = rotate(binary_image,
-                              -orientation * 180 / np.pi, resize=True) > 0
-        rotated_curr_im = rotate(self.curr_im,
-                                 -orientation * 180 / np.pi, resize=True)
-        rotated_curr_im[~binary_image] = np.tile([1, 1, 1],
-                                                 (np.sum(~binary_image), 1))
-        props = regionprops(binary_image.astype(int))[0]
-        roi = np.array(props.bbox)
-        minrow, mincol, maxrow, maxcol = roi
-        self.curr_im = rotated_curr_im[minrow:maxrow, mincol:maxcol]
-
-    def _load_patches(self):
-        """Crear medias para extraccion por color a partir de recortes del
-        bajalenguas"""
-        self.target_colors = []
-        patch_dir = cfg_images['patch_dir']
-        patches = os.listdir(patch_dir)
-        for patch in patches:
-            impatch = io.imread(os.path.join(patch_dir, patch))
-            impatch_hsv = rgb2hsv(impatch)
-            segments_slic = segmentation.slic(impatch, n_segments=2,
-                                              compactness=10, sigma=1)
-            for lab in np.unique(segments_slic):
-                mediana = np.median(impatch_hsv[segments_slic == lab], axis=0)
-                self.target_colors.append(mediana)
-
-    @staticmethod
-    def binary_by_edges(img_g):
-        "Segmentacion por bordes"
-        cedges = feature.canny(img_g, sigma=2, high_threshold=0.9,
-                               low_threshold=0.2, use_quantiles=True)
-        return cedges
-
-    @staticmethod
-    def binary_by_thresholding(img_g):
-        "Segmentacion por umbral de intensidad"
-        th = threshold_otsu(img_g)
-        binary_mask = img_g < th
-        return binary_mask
-
-    @staticmethod
-    def binary_by_colors(img, target_colors, thresh=0.1):
-        "Segmentacion por color"
-        segments_slic = segmentation.slic(img, n_segments=300,
-                                          compactness=10, sigma=1)
-        g = graph.rag_mean_color(img, segments_slic)
-        graphcut = graph.cut_threshold(segments_slic, g, 0.1)
-        g = graph.rag_mean_color(img, graphcut)
-        good_nodes = []
-        for nid in g.nodes():
-            color = g.node[nid]['mean color']
-            color = rgb2hsv(color[None, None, :])
-            minimo = np.min(pairwise_distances(color[0, :, :], target_colors))
-            if minimo < thresh:
-                good_nodes.append(nid)
-        binary_mask = np.zeros(graphcut.shape, dtype=bool)
-        for gn in good_nodes:
-            binary_mask = binary_mask + (graphcut == gn)
-        return binary_mask
-
-    def polish_mask(self, binary_mask):
-        "Elije la mejor region y completa huecos"
-        filled = morphology.convex_hull_object(binary_mask)
-        labels = measure.label(filled)
-        rprops = measure.regionprops(labels)
-        if len(rprops) == 0:
-            return binary_mask, np.inf, -1
-        disparity = self.calculate_disparity(rprops,
-                                             np.prod(binary_mask.shape))
-        I = np.argmin(disparity)
-        polished_mask = (labels == (I + 1))
-        polished_mask = morphology.convex_hull_image(polished_mask)
-        return polished_mask, disparity[I], rprops[I].orientation
-
-    @staticmethod
-    def _disparity_fun(geometric_props):
-        """Calcula la disparidad entre las propiedades de una region y
-        las propiedades objetivo elegidas en la configuracion"""
-        targets = np.array(cfg['stick']['geometry'])
-        weights = np.array(cfg['stick']['geometry-weights'])
-        return np.sum((weights * np.log(geometric_props / targets))**2)
-
-    def calculate_disparity(self, rprops, imarea, method='props'):
-        """Calcula la disparidad entre todas las regiones candidatas y
-        las propiedades objetivo elegidas en la configuracion
-
-        Args:
-            - rprops (list): Lista de propiedades de las regiones candidatas
-            - imarea (int): Area de la imagen
-            - method (str, optional): Metodo a utilizar para comparar las
-                regiones con el objetivo. (Puede ser `props` o `hu`)
-                    - `props`: usa tres propiedades geometricas.
-                    - `hu`: usa los hu-moments
-        """
-        if method == 'props':
-            descriptors = []
-            for r in rprops:
-                try:
-                    descriptors.append(np.array(
-                        (r.major_axis_length / r.minor_axis_length,
-                         r.area / (r.major_axis_length * r.minor_axis_length),
-                         float(r.area) / imarea
-                         ), dtype=float))
-                except ZeroDivisionError:
-                    descriptors.append(np.array((999, 999, 999), dtype=float))
-            disparity = map(self._disparity_fun, descriptors)
-        elif method == 'hu':
-            MAX_MOMENT = cfg['stick']['max-hu']
-            TARGET_HU = np.array(cfg['stick']['hu-moments'])
-            disparity = []
-            for r in rprops:
-                disparity.append(np.sum((np.log(r.moments_hu[:MAX_MOMENT]) -
-                                         np.log(TARGET_HU[:MAX_MOMENT]))**2))
-        else:
-            raise ValueError('No existe el metodo ' + str(method))
-        return disparity
-
-
-class EggFinder():
-
-    if cfg['model']['default_dir'] != 'None':
-        base_path = cfg['model']['default_dir']
-    else:
-        base_path = os.path.dirname(os.path.realpath(__file__))
-    MODEL_PATH = os.path.join(base_path, 'models', 'aedes-model.pkl')
-    DATA_PATH = os.path.join(base_path, 'models', 'aedes-data-model.pkl')
-    STANDARD_MAJOR_AXIS = cfg['eggs']['geometry']['major_axis']
-    STANDARD_MINOR_AXIS = cfg['eggs']['geometry']['minor_axis']
-    STANDARD_AREA = STANDARD_MAJOR_AXIS * STANDARD_MINOR_AXIS
-    TOL = cfg['eggs']['tolerance']  # Tolerancia para variaciones de tamanio
-    TOL = 1 + TOL / 100  # Convertir de porcentaje a fraccion
-
-    def __init__(self):
-        self._load_model()
-
-    def find_in(self, image, method='threshold'):
-        curr_im_g = rgb2gray(image)
-        # Segmento por color
-
-        if method == 'threshold':
-            threshold = 0.2
-            mask = (curr_im_g < threshold)
-            if np.mean(mask) > 0.07:
-                threshold = np.percentile(curr_im_g, 5)
-                mask = (curr_im_g < threshold)
-            labels = measure.label(mask)
-            self.mask = mask
-        elif method == 'quickshift':
-            # Los parametros deben ser adaptados a la escala de la imagen
-            labels = segmentation.quickshift(image,
-                                             kernel_size=3,
-                                             max_dist=6,
-                                             ratio=0.5)
-        # Calculo propiedades de las regiones segmentadas
-        regions = regionprops(labels, intensity_image=curr_im_g)
-        if len(regions) == 0:
-            return
-        py, px = np.array([x.centroid for x in regions]).T
-        alto_im = curr_im_g.shape[0]
-        areas = np.array([x.area for x in regions])
-        areas = areas.astype(float) / alto_im**2
-        perimetros = np.array([x.perimeter for x in regions])
-        perimetros = perimetros.astype(float) / alto_im
-        major_axis = np.array([x.major_axis_length for x in regions])
-        major_axis = major_axis.astype(float) / alto_im
-        minor_axis = np.array([x.minor_axis_length for x in regions])
-        minor_axis = minor_axis.astype(float) / alto_im
-        convex_areas = np.array([x.convex_area for x in regions])
-        convex_areas = convex_areas.astype(float) / alto_im**2
-        diff_areas = convex_areas - areas
-        intensity = np.array([x.mean_intensity for x in regions])
-        labels = np.arange(len(regions)) + 1
-
-        gi = self._filter_candidates(minor_axis, major_axis, areas)
-        gi = np.arange(len(minor_axis))
-        self.measures = np.vstack((areas[gi], perimetros[gi], major_axis[gi],
-                                   minor_axis[gi], diff_areas[gi],
-                                   intensity[gi], px[gi], py[gi])).T
-        self.classify()
-
-    def _filter_candidates(self, minor_axis, major_axis, areas):
-        """Filtra a los posibles candidatos en base a requisitos mínimos
-        o máximos de tamaño"""
-        singles = ((minor_axis > self.STANDARD_MINOR_AXIS / self.TOL) &
-                   (minor_axis < self.STANDARD_MINOR_AXIS * self.TOL) &
-                   (major_axis > self.STANDARD_MAJOR_AXIS / self.TOL) &
-                   (major_axis < self.STANDARD_MAJOR_AXIS * self.TOL) &
-                   (areas > self.STANDARD_AREA / self.TOL) &
-                   (areas < self.STANDARD_AREA * self.TOL)
-                   )
-        # Esto es por si hay 2 o 3 huevos pegados
-        multiples = (((areas > self.STANDARD_AREA * (2 - 1. / self.TOL)) &
-                     (areas < self.STANDARD_AREA * (2 + self.TOL))) |
-                     ((areas > self.STANDARD_AREA * (3 - 1. / self.TOL)) &
-                     (areas < self.STANDARD_AREA * (3 + self.TOL)))
-                     )
-        good_indices = singles | multiples
-        print("Total singles: %i" % np.sum(singles))
-        print("Total multiples: %i" % np.sum(multiples))
-        self.type = singles + multiples * 2
-        self.type = self.type[good_indices] - 1
-        return good_indices
-
-    def classify(self):
-        try:
-            self.classes = self.model.predict(self.measures)
-        except AttributeError:
-            self.classes = None
-
-    def start_trainning(self):
-        self.all_targets = np.array([])
-        self.all_measures = np.zeros((0, 8))
-
-    def push_user_input(self, measures, targets):
-        self.all_targets = np.r_[self.all_targets, targets]
-        self.all_measures = np.vstack([self.all_measures, measures])
-
-    def _load_model(self):
-        "Carga el modelo de clasificador de de arbol (DecisionTree)"
-        if os.path.isfile(self.MODEL_PATH):
-            model_file = open(self.MODEL_PATH, 'r')
-            self.model = pickle.load(model_file)
-            model_file.close()
-        else:
-            print("No Model")
-
-    def _load_data(self):
-        "Carga datos guardados de entrenamiento"
-        if os.path.isfile(self.DATA_PATH):
-            model_file = open(self.DATA_PATH, 'r')
-            self.all_measures, self.all_targets = pickle.load(model_file)
-            model_file.close()
-        else:
-            print("No Data")
-
-    def test_model(self):
-        "Medir el desempeño del clasificador"
-        if len(self.all_targets) == 0:
-            self._load_data()
-        model = RandomForestClassifier()
-        scores = cross_val_score(model, self.all_measures, self.all_targets,
-                                 cv=5, scoring='f1')
-        print("Score F1: %f" % np.mean(scores))
-
-    def save_data(self):
-        "Guardar datos de entrenamiento"
-        data = (self.all_measures, self.all_targets)
-        data_file = open(self.DATA_PATH, 'w')
-        pickle.dump(data, data_file)
-        data_file.close()
-
-    def save_model(self):
-        "Guardar modelo entrenado"
-        model = RandomForestClassifier()
-        model.fit(self.all_measures, self.all_targets)
-        model_file = open(self.MODEL_PATH, 'w')
-        pickle.dump(model, model_file)
-        model_file.close()
-        self.model = model
