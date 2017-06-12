@@ -79,10 +79,9 @@ class AedesDetector():
             warnings.warn("La imagen {:s} no pudo ser cargada"
                           .format(image_id))
         self.stick_analizer.set_current_image(image)
-        stick_status, limits = self.stick_analizer.get_limits()
-        self.stick_status = stick_status
-        if stick_status != 'Sin bajalenguas':
-            finder_status, egg_props = self.egg_finder.find_in(image, limits=limits,
+        self.stick_status, self.stick_limits = self.stick_analizer.get_limits()
+        if self.stick_status != 'Sin bajalenguas':
+            finder_status, egg_props = self.egg_finder.find_in(image, limits=self.stick_limits,
                                                          show_settings=True)
             self.finder_status = finder_status
             if finder_status == 'Status OK':
@@ -92,46 +91,39 @@ class AedesDetector():
             else:
                 egg_count = None
             self.output_connector.write_output(image_id,
-                                               stick_status + ' / ' + finder_status,
+                                               self.stick_status + ' / ' + finder_status,
                                                egg_count)
             print(egg_count)
         else:
-            print(stick_status)
+            print(self.stick_status)
             self.output_connector.write_output(image_id,
-                                               stick_status,
+                                               self.stick_status,
                                                None)
 
-    def classify(self, out, method='Threshods'):
-        # TODO :Filtrar las que quedan fuera del bajalenguas (por fuera de las rectas)
+    def classify(self, egg_props, method='Threshods'):
+
         all_real_centroids, egg_counts, all_corrs, \
-            all_contrasts, all_aspects = out
-        self.good_points = (np.array(all_corrs) > 0.8) & (np.array(all_contrasts) > 0.3)
+            all_contrasts, all_aspects = egg_props
+        self.all_real_centroids = all_real_centroids
         self.egg_counts = np.array(egg_counts)
+        self.good_points = (np.array(all_corrs) > 0.8) & (np.array(all_contrasts) > 0.3)
+        points_in_stick = self.get_points_in_stick()
+        self.good_points = self.good_points & points_in_stick
+
+    def get_points_in_stick(self):
+        ylimits = []
+        ys, xs = np.vstack(self.all_real_centroids).T
+        scale = np.amin(self.image.shape[:2])
+        for angle, dist in zip(*self.stick_limits):
+            yl = -np.cos(angle) / np.sin(angle) * xs + dist / np.sin(angle) * scale
+            ylimits.append(yl)
+        points_in_stick = (ys > ylimits[0]) & (ys < (ylimits[1]))
+        return points_in_stick
 
     def count_eggs(self):
         total_eggs = np.sum(self.egg_counts[self.good_points])
         return total_eggs
 
-    def test_stick_algorithm(self):
-        # Viejo! Necesita ser refactoreado
-        for root, dirs, files in os.walk(self.im_path):
-            for file_name in filter(self._is_image_file, files):
-                image = os.path.join(root, file_name)
-                self._load_image(image)
-                self._find_stick()
-                if not hasattr(self, 'fig'):
-                    self.fig = plt.figure()
-                    self.fig.canvas.mpl_connect('key_press_event',
-                                                self._handle_fig_event)
-                    self.fig.canvas.mpl_connect('button_press_event',
-                                                self._handle_fig_event)
-                self.next_figure = False
-                self.fig.clf()
-                ax = self.fig.add_subplot(121)
-                ax.imshow(self.curr_im)
-                self.fig.canvas.draw()
-                while not self.next_figure:
-                    self.fig.waitforbuttonpress()
 
     def train_model(self, trainsamples=None, show_mask=False):
         self.egg_finder.start_trainning()

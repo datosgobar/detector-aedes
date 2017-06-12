@@ -150,6 +150,7 @@
  | <a href="#P"><strong>P</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
 </div>
@@ -167,21 +168,25 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.base_path">base_path (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.base_path">base_path (detector_aedes.analyzers.EggFinder attribute)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.binary_by_colors">binary_by_colors() (detector_aedes.detector_aedes.StickAnalizer static method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti.binary_by_colors">binary_by_colors() (detector_aedes.analyzers.StickAnalizerMulti static method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.binary_by_edges">binary_by_edges() (detector_aedes.detector_aedes.StickAnalizer static method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti.binary_by_edges">binary_by_edges() (detector_aedes.analyzers.StickAnalizerMulti static method)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.binary_by_thresholding">binary_by_thresholding() (detector_aedes.detector_aedes.StickAnalizer static method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti.binary_by_thresholding">binary_by_thresholding() (detector_aedes.analyzers.StickAnalizerMulti static method)</a>
+  </dt>
+
+      
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.ODKConnector.BLOBKEY_BASE">BLOBKEY_BASE (detector_aedes.image_connectors.ODKConnector attribute)</a>
   </dt>
 
   </dl></td>
@@ -191,13 +196,31 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.calculate_disparity">calculate_disparity() (detector_aedes.detector_aedes.StickAnalizer method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.calculate_contrast">calculate_contrast() (detector_aedes.analyzers.EllipseFinder static method)</a>
   </dt>
 
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti.calculate_disparity">calculate_disparity() (detector_aedes.analyzers.StickAnalizerMulti method)</a>
+  </dt>
+
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.classify">classify() (detector_aedes.analyzers.EggFinder method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.classify">(detector_aedes.detector_aedes.AedesDetector method)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.classify">classify() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.count_eggs">count_eggs() (detector_aedes.detector_aedes.AedesDetector method)</a>
+  </dt>
+
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.cut_region">cut_region() (detector_aedes.analyzers.EllipseFinder static method)</a>
   </dt>
 
   </dl></td>
@@ -207,11 +230,15 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.DATA_PATH">DATA_PATH (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.DATA_PATH">DATA_PATH (detector_aedes.analyzers.EggFinder attribute)</a>
   </dt>
 
       
   <dt><a href="detector_aedes.html#module-detector_aedes">detector_aedes (module)</a>
+  </dt>
+
+      
+  <dt><a href="detector_aedes.html#module-detector_aedes.analyzers">detector_aedes.analyzers (module)</a>
   </dt>
 
   </dl></td>
@@ -225,6 +252,10 @@
   </dt>
 
       
+  <dt><a href="detector_aedes.html#module-detector_aedes.image_connectors">detector_aedes.image_connectors (module)</a>
+  </dt>
+
+      
   <dt><a href="detector_aedes.html#module-detector_aedes.old_detector_aedes">detector_aedes.old_detector_aedes (module)</a>
   </dt>
 
@@ -235,7 +266,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder">EggFinder (class in detector_aedes.detector_aedes)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder">EggFinder (class in detector_aedes.analyzers)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder">EllipseFinder (class in detector_aedes.analyzers)</a>
   </dt>
 
   </dl></td>
@@ -249,11 +286,21 @@
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.find_in">find_in() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.find_in">find_in() (detector_aedes.analyzers.EggFinder method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.find_in">(detector_aedes.analyzers.EllipseFinder method)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.FolderConnector">FolderConnector (class in detector_aedes.image_connectors)</a>
+  </dt>
+
       
   <dt><a href="detector_aedes.html#detector_aedes.connectors.FolderInputConnector">FolderInputConnector (class in detector_aedes.connectors)</a>
   </dt>
@@ -269,7 +316,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.get_clipped_image">get_clipped_image() (detector_aedes.detector_aedes.StickAnalizer method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.generate_template">generate_template() (detector_aedes.analyzers.EllipseFinder static method)</a>
+  </dt>
+
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti.get_clipped_image">get_clipped_image() (detector_aedes.analyzers.StickAnalizerMulti method)</a>
   </dt>
 
       
@@ -279,6 +330,14 @@
       <dd><dl>
         
   <dt><a href="detector_aedes.html#detector_aedes.connectors.ODKInputConnector.get_image">(detector_aedes.connectors.ODKInputConnector method)</a>
+  </dt>
+
+        
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.FolderConnector.get_image">(detector_aedes.image_connectors.FolderConnector method)</a>
+  </dt>
+
+        
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.ODKConnector.get_image">(detector_aedes.image_connectors.ODKConnector method)</a>
   </dt>
 
       </dl></dd>
@@ -293,7 +352,19 @@
   <dt><a href="detector_aedes.html#detector_aedes.connectors.ODKInputConnector.get_image_ids">(detector_aedes.connectors.ODKInputConnector method)</a>
   </dt>
 
+        
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.FolderConnector.get_image_ids">(detector_aedes.image_connectors.FolderConnector method)</a>
+  </dt>
+
+        
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.ODKConnector.get_image_ids">(detector_aedes.image_connectors.ODKConnector method)</a>
+  </dt>
+
       </dl></dd>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerHough.get_limits">get_limits() (detector_aedes.analyzers.StickAnalizerHough method)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -301,7 +372,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.MODEL_PATH">MODEL_PATH (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.MODEL_PATH">MODEL_PATH (detector_aedes.analyzers.EggFinder attribute)</a>
   </dt>
 
   </dl></td>
@@ -309,6 +380,12 @@
 
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.ODKConnector">ODKConnector (class in detector_aedes.image_connectors)</a>
+  </dt>
+
+  </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="detector_aedes.html#detector_aedes.connectors.ODKInputConnector">ODKInputConnector (class in detector_aedes.connectors)</a>
@@ -331,7 +408,7 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.polish_mask">polish_mask() (detector_aedes.detector_aedes.StickAnalizer method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti.polish_mask">polish_mask() (detector_aedes.analyzers.StickAnalizerMulti method)</a>
   </dt>
 
       
@@ -339,7 +416,7 @@
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.push_user_input">push_user_input() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.push_user_input">push_user_input() (detector_aedes.analyzers.EggFinder method)</a>
   </dt>
 
   </dl></td>
@@ -349,37 +426,63 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.save_data">save_data() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.save_data">save_data() (detector_aedes.analyzers.EggFinder method)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.save_model">save_model() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.save_model">save_model() (detector_aedes.analyzers.EggFinder method)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer.set_current_image">set_current_image() (detector_aedes.detector_aedes.StickAnalizer method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizer.set_current_image">set_current_image() (detector_aedes.analyzers.StickAnalizer method)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.STANDARD_AREA">STANDARD_AREA (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.STANDARD_AREA">STANDARD_AREA (detector_aedes.analyzers.EggFinder attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.STANDARD_AREA">(detector_aedes.analyzers.EllipseFinder attribute)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.STANDARD_MAJOR_AXIS">STANDARD_MAJOR_AXIS (detector_aedes.analyzers.EggFinder attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.STANDARD_MAJOR_AXIS">(detector_aedes.analyzers.EllipseFinder attribute)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.STANDARD_MAJOR_AXIS">STANDARD_MAJOR_AXIS (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.STANDARD_MINOR_AXIS">STANDARD_MINOR_AXIS (detector_aedes.analyzers.EggFinder attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.STANDARD_MINOR_AXIS">(detector_aedes.analyzers.EllipseFinder attribute)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.start_trainning">start_trainning() (detector_aedes.analyzers.EggFinder method)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.STANDARD_MINOR_AXIS">STANDARD_MINOR_AXIS (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizer">StickAnalizer (class in detector_aedes.analyzers)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.start_trainning">start_trainning() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerHough">StickAnalizerHough (class in detector_aedes.analyzers)</a>
   </dt>
 
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.StickAnalizer">StickAnalizer (class in detector_aedes.detector_aedes)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.StickAnalizerMulti">StickAnalizerMulti (class in detector_aedes.analyzers)</a>
   </dt>
 
   </dl></td>
@@ -389,7 +492,7 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.test_model">test_model() (detector_aedes.detector_aedes.EggFinder method)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.test_model">test_model() (detector_aedes.analyzers.EggFinder method)</a>
   </dt>
 
       
@@ -399,11 +502,33 @@
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.EggFinder.TOL">TOL (detector_aedes.detector_aedes.EggFinder attribute)</a>
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EggFinder.TOL">TOL (detector_aedes.analyzers.EggFinder attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="detector_aedes.html#detector_aedes.analyzers.EllipseFinder.TOL">(detector_aedes.analyzers.EllipseFinder attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.train_model">train_model() (detector_aedes.detector_aedes.AedesDetector method)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.ODKConnector.URL_BINARYDATA">URL_BINARYDATA (detector_aedes.image_connectors.ODKConnector attribute)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="detector_aedes.html#detector_aedes.image_connectors.ODKConnector.URL_ENTRIES">URL_ENTRIES (detector_aedes.image_connectors.ODKConnector attribute)</a>
   </dt>
 
   </dl></td>

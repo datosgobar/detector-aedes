@@ -139,7 +139,6 @@ class EllipseFinder():
         if cut_width < 3:
             return ('Imagen con poca resolucion', None)
         cut_width_multi = int(cut_width * 2)
-        egg_counts = []
         all_centroids = []
         all_aspects = []
         all_real_centroids = []
@@ -189,7 +188,7 @@ class EllipseFinder():
                     if region.area < area_up:
                         if region.convex_area > region.area * 1.5:
                             continue
-                        # Divido por 1.7 porque el template no coincide excatamente
+                        # Divido por 1.7 porque el template no coincide exactamente
                         # (ver si se puede corregir en el template)
                         min_ax = new_region.minor_axis_length / 1.7
                         maj_ax = new_region.major_axis_length / 1.7
@@ -204,6 +203,8 @@ class EllipseFinder():
                                                           (new_region.centroid[1], new_region.centroid[0]),
                                                           2 * cut_width)
                         correlation = self._nan_correlation(template, recorte)
+                        n_points = np.sum(~np.isnan(template))
+                        correlation = self._correct_corr(correlation, n_points, 5)
                         all_contrasts.append(contrast)
                         all_corrs.append(correlation)
                         c_i = region.centroid[0] + new_region.centroid[0] - cut_width
@@ -211,7 +212,6 @@ class EllipseFinder():
                         all_centroids.append(region.centroid)
                         all_real_centroids.append([c_i, c_j])
                         all_aspects.append(aspect)
-                        egg_counts.append(1)
                     # Si creemos que hay varios pegados
                     elif region.area < 4 * area_up:
                         recorte, new_region, labels, i_max_region = self.cut_region(region.centroid,
@@ -226,7 +226,9 @@ class EllipseFinder():
                         X = np.vstack((j, i)).T
                         temp_xcorrs = []
                         try_eggs = [2, 3, 4]
-                        for eggnum in try_eggs:
+                        temp_aspects = [[] for x in try_eggs]
+                        temp_centroids = [[] for x in try_eggs]
+                        for iegg, eggnum in enumerate(try_eggs):
                             gm = GaussianMixture(n_components=eggnum)
                             gm.fit(X)
                             templates = []
@@ -236,6 +238,8 @@ class EllipseFinder():
                                 angle = np.arctan2(u[1], u[0])
                                 v = 2. * np.sqrt(2.) * np.sqrt(v)
                                 aspect = v[1] / v[0]
+                                temp_aspects[iegg].append(aspect)
+                                temp_centroids[iegg].append(np.flipud(gm.means_[n,:2]))
                                 t = self.generate_template(minor_axis_mean, major_axis_mean,
                                                            np.pi / 2 + angle,
                                                            gm.means_[n, :2], 2 * cut_width_multi)
@@ -245,17 +249,41 @@ class EllipseFinder():
                             template = np.amin(templates, -1)
                             template[np.isinf(template)] = np.nan
                             correlation = self._nan_correlation(template, recorte)
+                            if eggnum == 2:
+                                correlation = 1
+                            n_points = np.sum(~np.isnan(template))
+                            k_params = eggnum * 5
+                            correlation = self._correct_corr(correlation, n_points, k_params)
                             temp_xcorrs.append(correlation)
                         i_max_corrs = np.argmax(temp_xcorrs)
                         max_corr = temp_xcorrs[i_max_corrs]
-                        all_corrs.append(max_corr)
-                        egg_counts.append(try_eggs[i_max_corrs])
-                        all_contrasts.append(contrast)
+                        all_corrs += [max_corr] * try_eggs[i_max_corrs]
+                        all_aspects = all_aspects + temp_aspects[i_max_corrs]
+                        all_contrasts += [contrast] * try_eggs[i_max_corrs]
                         all_centroids.append(region.centroid)
-                        all_real_centroids.append(region.centroid)
-        out_data = (all_real_centroids, egg_counts, all_corrs, all_contrasts,
+                        referenced_centroids = [(region.centroid[0] - cut_width_multi + c[0],
+                                                 region.centroid[1] - cut_width_multi + c[1])
+                                                for c in temp_centroids[i_max_corrs]
+                                                ]
+                        all_real_centroids += referenced_centroids
+        out_data = (all_real_centroids, all_corrs, all_contrasts,
                     all_aspects)
         return ('Status OK', out_data)
+
+    @staticmethod
+    def _correct_corr(R, n, k):
+        """Corrige la correlacion por cantida de parametros.
+
+        Args:
+            -R (float): correlacion
+            -n (int): cantidad de datos
+            -k (int): cantidad de parametros
+        """
+        try:
+            corrected = 1 - ((1 - R**2) * float(n - 1) / (n - k - 1))
+        except:
+            corrected = None
+        return corrected
 
     @staticmethod
     def _nan_correlation(matrix1, matrix2):
