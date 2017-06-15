@@ -24,6 +24,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.mixture import GaussianMixture
 from sklearn.model_selection import cross_val_score
 from scipy.signal import convolve2d
+import matplotlib.pyplot as plt
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -52,9 +53,9 @@ class StickAnalizer():
 class StickAnalizerHough(StickAnalizer):
     """Busca lineas de Hough paralelas"""
 
-    def get_limits(self, max_width_proportion=0.333):
+    def get_limits(self, max_width_proportion=0.35):
         """Busca dos lineas paralelas que correspondan al bajalenguas"""
-        max_angle_diff = 10. / 180 * np.pi
+        max_angle_diff = 2. / 180 * np.pi
         im_width = np.amin(self.curr_im_lowres_g.shape)
         min_dist = int(1. / 6 * im_width)
         sigma = 3
@@ -73,6 +74,8 @@ class StickAnalizerHough(StickAnalizer):
         dists = params[2] / im_width
         angles = params[1]
         dangles = pairwise_distances(angles[:, None])
+        dangles = np.dstack((dangles, np.abs(dangles - np.pi)))
+        dangles = np.amin(dangles, 2)
         np.fill_diagonal(dangles, np.inf)
         i, j = np.unravel_index(np.argmin(dangles), dangles.shape)
         if i == j:
@@ -86,7 +89,12 @@ class StickAnalizerHough(StickAnalizer):
             limits = None
         else:
             status = 'Con bajalenguas'
-            limits = [[angles[i], angles[j]], [dists[i], dists[j]]]
+            angles = np.array([angles[i], angles[j]])
+            dists = np.array([dists[i], dists[j]])
+            # Ordeno los bordes para que el de arriba quede primero
+            norm_dist = np.sign(angles) * dists
+            sort_idx = np.argsort(norm_dist)
+            limits = [angles[sort_idx], dists[sort_idx]]
         return status, limits
 
 
@@ -95,12 +103,12 @@ class EllipseFinder():
 
     STANDARD_MAJOR_AXIS = cfg['eggs']['geometry']['major_axis']
     STANDARD_MINOR_AXIS = cfg['eggs']['geometry']['minor_axis']
-    STANDARD_AREA = np.pi * STANDARD_MAJOR_AXIS * STANDARD_MINOR_AXIS
+    STANDARD_AREA = np.pi * STANDARD_MAJOR_AXIS * STANDARD_MINOR_AXIS / 4
     # Tolerancia para variaciones de tamanio
     TOL = float(cfg['eggs']['tolerance'])
     TOL = 1 + TOL / 100  # Convertir de porcentaje a fraccion
 
-    def find_in(self, img_g, limits=None, max_thres=0.8, thresh_step=0.05,
+    def find_in(self, img_g, limits=None, max_thres=0.6, thresh_step=0.05,
                 dmin=None, show_settings=False):
         u"""Busca elipses del tamaño definido en la configuración.
 
@@ -129,14 +137,19 @@ class EllipseFinder():
         if len(img_g.shape) > 2:
             img_g = rgb2gray(img_g)
         if limits:
+            # if np.diff(limits[1]) > 0:
+            #     limits = [list(np.flipud(limits[0])), list(np.flipud(limits[1]))]
             angles, dists = limits
-            scale = np.abs(np.diff(dists)) * np.amin(img_g.shape)
+            self.im_width = np.amin(img_g.shape)
+            scale = np.abs(np.diff(dists)) * self.im_width
+            self.scale = scale
+            self.limits = limits
         else:
-            scale = 0.2 * np.amin(img_g.shape)
+            return ('No busco sin bajalenguas', None)
             # Si no hay una escala definida asumir que el ancho del bajalenguas
             # ocupa un quinto del alto de la foto (asumida apaisada)
-        cut_width = int(2 * self.STANDARD_MAJOR_AXIS * scale)
-        if cut_width < 3:
+        cut_width = int(self.TOL * self.STANDARD_MAJOR_AXIS * scale)
+        if cut_width <= 5:
             return ('Imagen con poca resolucion', None)
         cut_width_multi = int(cut_width * 2)
         all_centroids = []
@@ -148,16 +161,16 @@ class EllipseFinder():
         area_down = self.STANDARD_AREA / self.TOL * scale**2
         major_axis_up = self.STANDARD_MAJOR_AXIS * self.TOL * scale
         major_axis_down = self.STANDARD_MAJOR_AXIS / self.TOL * scale
-        major_axis_mean = (major_axis_up + major_axis_down) / 2
+        major_axis_mean = self.STANDARD_MAJOR_AXIS * scale
         minor_axis_up = self.STANDARD_MINOR_AXIS * self.TOL * scale
         minor_axis_down = self.STANDARD_MINOR_AXIS / self.TOL * scale
-        minor_axis_mean = (major_axis_down + minor_axis_up) / 2
+        minor_axis_mean = self.STANDARD_MINOR_AXIS * scale
         if not dmin:
-            dmin = 1.8 * minor_axis_up
+            dmin = 1.5 * minor_axis_mean
         if show_settings:
             report_vars = ['scale', 'area_up', 'area_down', 'major_axis_mean',
                            'minor_axis_mean', 'cut_width', 'cut_width_multi',
-                           'dmin']
+                           'dmin', 'limits']
             for name in report_vars:
                 print(name, eval(name))
         # MAIN LOOP
@@ -168,6 +181,10 @@ class EllipseFinder():
             for region in regions:
                 if region.area < area_down or region.area > 4 * area_up:
                     continue
+                if not self._region_is_in_stick(region):
+                    continue
+                # if abs(region.centroid[0] - 1240) < 30 and abs(region.centroid[1] - 3565) < 30:
+                #     print('encontre 1', region.area)
                 if len(all_centroids) == 0:
                     D = np.inf
                 else:
@@ -180,6 +197,18 @@ class EllipseFinder():
                     recorte, new_region, labels, i_max_region = myreg
                     if recorte is None:
                         continue
+                    # if abs(region.centroid[0] - 1240) < 30 and abs(region.centroid[1] - 3565) < 30:
+                    #     # print(correlation, self.STANDARD_MAJOR_AXIS)
+                    #     # plt.imshow(template)
+                    #     # plt.draw()
+                    #     # plt.waitforbuttonpress()
+                    #     # print(min_ax, maj_ax)
+                    #     plt.subplot(121)
+                    #     # plt.imshow(template)
+                    #     plt.subplot(122)
+                    #     plt.imshow(recorte)
+                    #     plt.draw()
+                    #     plt.waitforbuttonpress()
                     contrast = self.calculate_contrast(recorte,
                                                        labels == (i_max_region + 1))
                     if contrast < 0.1:
@@ -190,21 +219,24 @@ class EllipseFinder():
                             continue
                         # Divido por 1.7 porque el template no coincide exactamente
                         # (ver si se puede corregir en el template)
-                        min_ax = new_region.minor_axis_length / 1.7
-                        maj_ax = new_region.major_axis_length / 1.7
-                        min_ax = max(minor_axis_down, min(minor_axis_up, min_ax))
-                        maj_ax = max(major_axis_down, min(major_axis_up, maj_ax))
-                        aspect = maj_ax / min_ax
-                        if aspect < 2 or aspect > 7:
-                            continue
-                        template = self.generate_template(min_ax,
-                                                          maj_ax,
+                        min_ax = new_region.minor_axis_length / 2
+                        maj_ax = new_region.major_axis_length / 2
+                        try:
+                            aspect = maj_ax / min_ax
+                        except ZeroDivisionError:
+                            aspect = np.inf
+                        if not isinstance(aspect, float):
+                            aspect = aspect[0]
+                        template = self.generate_template(minor_axis_mean,
+                                                          major_axis_mean,
                                                           -new_region.orientation,
                                                           (new_region.centroid[1], new_region.centroid[0]),
                                                           2 * cut_width)
                         correlation = self._nan_correlation(template, recorte)
                         n_points = np.sum(~np.isnan(template))
-                        correlation = self._correct_corr(correlation, n_points, 5)
+                        # correlation = self._correct_corr(correlation, n_points, 5)
+                        if correlation < 0.5:
+                            continue
                         all_contrasts.append(contrast)
                         all_corrs.append(correlation)
                         c_i = region.centroid[0] + new_region.centroid[0] - cut_width
@@ -238,6 +270,8 @@ class EllipseFinder():
                                 angle = np.arctan2(u[1], u[0])
                                 v = 2. * np.sqrt(2.) * np.sqrt(v)
                                 aspect = v[1] / v[0]
+                                if not isinstance(aspect, float):
+                                    aspect = aspect[0]
                                 temp_aspects[iegg].append(aspect)
                                 temp_centroids[iegg].append(np.flipud(gm.means_[n,:2]))
                                 t = self.generate_template(minor_axis_mean, major_axis_mean,
@@ -249,14 +283,24 @@ class EllipseFinder():
                             template = np.amin(templates, -1)
                             template[np.isinf(template)] = np.nan
                             correlation = self._nan_correlation(template, recorte)
-                            if eggnum == 2:
-                                correlation = 1
                             n_points = np.sum(~np.isnan(template))
                             k_params = eggnum * 5
-                            correlation = self._correct_corr(correlation, n_points, k_params)
+                            # if abs(region.centroid[0] - 1056) < 30 and abs(region.centroid[1] - 2340) < 30:
+                            #     print(correlation, self.STANDARD_MAJOR_AXIS)
+                            #     plt.subplot(121)
+                            #     plt.cla()
+                            #     plt.imshow(recorte)
+                            #     plt.subplot(122)
+                            #     plt.cla()
+                            #     plt.imshow(template)
+                            #     plt.draw()
+                            #     plt.waitforbuttonpress()
+                            # correlation = self._correct_corr(correlation, n_points, k_params)
                             temp_xcorrs.append(correlation)
                         i_max_corrs = np.argmax(temp_xcorrs)
                         max_corr = temp_xcorrs[i_max_corrs]
+                        if max_corr < 0.5:
+                            continue
                         all_corrs += [max_corr] * try_eggs[i_max_corrs]
                         all_aspects = all_aspects + temp_aspects[i_max_corrs]
                         all_contrasts += [contrast] * try_eggs[i_max_corrs]
@@ -272,7 +316,7 @@ class EllipseFinder():
 
     @staticmethod
     def _correct_corr(R, n, k):
-        """Corrige la correlacion por cantida de parametros.
+        """Corrige la correlacion por cantidad de parametros.
 
         Args:
             -R (float): correlacion
@@ -325,6 +369,14 @@ class EllipseFinder():
         contrast = (Imax - Imin) / (Imax + Imin)
         return contrast
 
+    def _region_is_in_stick(self, region):
+        ylimits = []
+        ys, xs = region.centroid
+        for angle, dist in zip(*self.limits):
+            yl = -np.cos(angle) / np.sin(angle) * xs + dist / np.sin(angle) * self.im_width
+            ylimits.append(yl)
+        point_in_stick = (ys > (ylimits[0] - 20)) & (ys < (ylimits[1] + 20))
+        return point_in_stick
 
     @staticmethod
     def generate_template(minor_axis, major_axis, angle, centroid, res):

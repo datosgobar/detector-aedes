@@ -84,46 +84,29 @@ class AedesDetector():
             finder_status, egg_props = self.egg_finder.find_in(image, limits=self.stick_limits,
                                                          show_settings=True)
             self.finder_status = finder_status
-            if finder_status == 'Status OK':
-                self.classify(egg_props, method='Thresholds')
-                egg_count = self.count_eggs()
+            if finder_status in ['Status OK', 'Early stop']:
                 self.egg_props = egg_props
+                self.classify(method='Thresholds')
             else:
-                egg_count = None
+                self.egg_count = None
             self.output_connector.write_output(image_id,
                                                self.stick_status + ' / ' + finder_status,
-                                               egg_count)
-            print(egg_count)
+                                               self.egg_count, self.doubt_count)
+            print(self.egg_count)
         else:
             print(self.stick_status)
             self.output_connector.write_output(image_id,
                                                self.stick_status,
-                                               None)
+                                               None, None)
 
-    def classify(self, egg_props, method='Threshods'):
-
-        all_real_centroids, egg_counts, all_corrs, \
-            all_contrasts, all_aspects = egg_props
+    def classify(self, method='Threshods'):
+        all_real_centroids, all_corrs, all_contrasts, all_aspects = self.egg_props
         self.all_real_centroids = all_real_centroids
-        self.egg_counts = np.array(egg_counts)
-        self.good_points = (np.array(all_corrs) > 0.8) & (np.array(all_contrasts) > 0.3)
-        points_in_stick = self.get_points_in_stick()
-        self.good_points = self.good_points & points_in_stick
-
-    def get_points_in_stick(self):
-        ylimits = []
-        ys, xs = np.vstack(self.all_real_centroids).T
-        scale = np.amin(self.image.shape[:2])
-        for angle, dist in zip(*self.stick_limits):
-            yl = -np.cos(angle) / np.sin(angle) * xs + dist / np.sin(angle) * scale
-            ylimits.append(yl)
-        points_in_stick = (ys > ylimits[0]) & (ys < (ylimits[1]))
-        return points_in_stick
-
-    def count_eggs(self):
-        total_eggs = np.sum(self.egg_counts[self.good_points])
-        return total_eggs
-
+        self.good_points = (np.array(all_corrs) > 0.8)
+        self.good_points = self.good_points & (np.array(all_contrasts) > 0.3)
+        self.semi_points = (np.array(all_corrs) > 0.8) & (np.array(all_contrasts) <= 0.3)
+        self.egg_count = np.sum(self.good_points)
+        self.doubt_count = np.sum(self.semi_points)
 
     def train_model(self, trainsamples=None, show_mask=False):
         self.egg_finder.start_trainning()
@@ -172,14 +155,34 @@ class AedesDetector():
                                         self._handle_fig_event)
         self.next_figure = False
         self.fig.clf()
-        ax = self.fig.add_subplot(111)
+        ax = self.fig.add_subplot(121)
         ax.set_title('Presione N para continuar analizando la proxima foto.')
         ax.imshow(self.image)
-        centers = np.vstack(self.egg_props[0])
-        ax.scatter(centers[self.good_points, 1],
-                   centers[self.good_points, 0],
-                   s=80, marker='x',
-                   color='g')
+        if self.stick_limits:
+            count = -1
+            for angle, dist in zip(*self.stick_limits):
+                count += 1
+                dist = dist * np.amin(self.image.shape[:2])
+                y0 = (dist - 0 * np.cos(angle)) / np.sin(angle)
+                y1 = (dist - self.image.shape[1] * np.cos(angle)) / np.sin(angle)
+                ax.plot((0, self.image.shape[1]), (y0, y1), '-',
+                         color=['r', 'g'][count], linewidth=0.5)
+        if len(self.egg_props[0]) > 0:
+            centers = np.vstack(self.egg_props[0])
+            ax.scatter(centers[self.good_points, 1],
+                       centers[self.good_points, 0],
+                       s=80, marker='x',
+                       color='r')
+            centers = np.vstack(self.egg_props[0])
+            ax.scatter(centers[self.semi_points, 1],
+                       centers[self.semi_points, 0],
+                       s=80, marker='x',
+                       color='y')
+            # for c, q, cont in zip(centers, self.good_points, self.egg_props[2]):
+            #     if q:
+            #         ax.text(c[1], c[0], cont)
+        ax2 = self.fig.add_subplot(122)
+        ax2.plot(self.egg_props[1], self.egg_props[2], '.')
         self.fig.canvas.draw()
         while not self.next_figure:
             self.fig.waitforbuttonpress()

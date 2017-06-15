@@ -96,11 +96,11 @@ class FileOutputConnector():
         self.file_handle = open(file_name, 'w')
         self.file_handle.close()
 
-    def write_output(self, image_id, status, egg_count):
+    def write_output(self, image_id, status, egg_count, doubt_count):
         """Escribe una linea en el archivo CSV con id, status y cantidad"""
         self.file_handle = open(self.file_name, 'a')
         self.writer = csv.writer(self.file_handle)
-        self.writer.writerow([image_id, status, egg_count])
+        self.writer.writerow([image_id, status, egg_count, doubt_count])
         self.file_handle.close()
 
 class FusionTablesOutputConnector():
