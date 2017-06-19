@@ -42,6 +42,8 @@ class StickAnalizer():
     def set_current_image(self, image):
         """Definir la imagen de trabajo."""
         orig_size = image.shape[0:2]
+        if np.diff(orig_size) < 0:
+            image = np.swapaxes(image, 0, 1)
         self.scale = (np.amin(orig_size) / self.lowres_width)
         new_size = np.array(orig_size) / self.scale
         image_lowres = transform.resize(image, new_size)
@@ -53,21 +55,21 @@ class StickAnalizer():
 class StickAnalizerHough(StickAnalizer):
     """Busca lineas de Hough paralelas"""
 
-    def get_limits(self, max_width_proportion=0.35):
+    def get_limits(self, max_width_proportion=0.45):
         """Busca dos lineas paralelas que correspondan al bajalenguas"""
-        max_angle_diff = 2. / 180 * np.pi
+        max_angle_diff = 5. / 180 * np.pi
         im_width = np.amin(self.curr_im_lowres_g.shape)
         min_dist = int(1. / 6 * im_width)
         sigma = 3
         edges = canny(self.curr_im_lowres_g, sigma)
-        while np.mean(edges) < 0.005:
+        while np.mean(edges) < 0.01:
             sigma = (sigma - 0.1)
             if sigma < 0:
                 break
             edges = canny(self.curr_im_lowres_g, sigma)
         self.edges = edges
         h, theta, d = hough_line(edges)
-        params = hough_line_peaks(h, theta, d, num_peaks=4,
+        params = hough_line_peaks(h, theta, d, num_peaks=6,
                                   min_distance=min_dist)
         self.params = params
         # Normalizo al ancho de la imagen
@@ -78,35 +80,73 @@ class StickAnalizerHough(StickAnalizer):
         dangles = np.amin(dangles, 2)
         np.fill_diagonal(dangles, np.inf)
         i, j = np.unravel_index(np.argmin(dangles), dangles.shape)
+        angles = np.array([angles[i], angles[j]])
+        dists = np.array([dists[i], dists[j]])
+        # Ordeno los bordes para que el de arriba quede primero
+        norm_dist = np.sign(angles) * dists
+        sort_idx = np.argsort(norm_dist)
         if i == j:
             status = 'Sin bajalenguas'
             limits = None
         elif dangles[i, j] > max_angle_diff:
-            status = 'Sin bajalenguas'
+            status = 'Sin bajalenguas - mal paralelismo'
             limits = None
-        elif abs(dists[i] - dists[j]) > max_width_proportion:
-            status = 'Sin bajalenguas'
+        elif abs(np.diff(norm_dist)) > max_width_proportion:
+            status = 'Sin bajalenguas - mal ratio'
+            limits = None
+        elif abs(angles[0]) < 20. / 180 * np.pi:
+            status = 'Sin bajalenguas - mala inclinacion'
             limits = None
         else:
             status = 'Con bajalenguas'
-            angles = np.array([angles[i], angles[j]])
-            dists = np.array([dists[i], dists[j]])
-            # Ordeno los bordes para que el de arriba quede primero
-            norm_dist = np.sign(angles) * dists
-            sort_idx = np.argsort(norm_dist)
             limits = [angles[sort_idx], dists[sort_idx]]
         return status, limits
 
 
-class EllipseFinder():
-    u"""Busca elipses del tamaño definido en la configuración."""
-
+class SearchParams():
+    """Parametros geometricos para EllipseFinder"""
+    TRY_EGGS = [2, 3, 4]
     STANDARD_MAJOR_AXIS = cfg['eggs']['geometry']['major_axis']
     STANDARD_MINOR_AXIS = cfg['eggs']['geometry']['minor_axis']
     STANDARD_AREA = np.pi * STANDARD_MAJOR_AXIS * STANDARD_MINOR_AXIS / 4
     # Tolerancia para variaciones de tamanio
     TOL = float(cfg['eggs']['tolerance'])
     TOL = 1 + TOL / 100  # Convertir de porcentaje a fraccion
+
+    def __init__(self, im_size, limits, dmin):
+        angles, dists = limits
+        self.im_height = np.amin(im_size)
+        norm_dist = np.sign(angles) * dists
+        scale = np.abs(np.diff(norm_dist)) * self.im_height
+        self.scale = scale  # Ancho del bajalenguas
+        normalized_dists = dists * self.im_height
+        self.limits = (angles, normalized_dists)  # Limites del bajalenguas
+        self.cut_width = int(self.TOL * self.STANDARD_MAJOR_AXIS * scale)  # Tamaño de la region a inspeccionar
+        self.cut_width_multi = int(self.cut_width * 2)  # Tamaño de la region para huevos multiples
+        self.area_up = self.STANDARD_AREA * self.TOL * scale**2
+        self.area_down = self.STANDARD_AREA / self.TOL * scale**2
+        self.major_axis_up = self.STANDARD_MAJOR_AXIS * self.TOL * scale
+        self.major_axis_down = self.STANDARD_MAJOR_AXIS / self.TOL * scale
+        self.major_axis_mean = self.STANDARD_MAJOR_AXIS * scale
+        self.minor_axis_up = self.STANDARD_MINOR_AXIS * self.TOL * scale
+        self.minor_axis_down = self.STANDARD_MINOR_AXIS / self.TOL * scale
+        self.minor_axis_mean = self.STANDARD_MINOR_AXIS * scale
+        if dmin:  # Distancia minima entre regiones
+            self.dmin = dmin
+        else:
+            self.dmin = 1.5 * self.minor_axis_mean
+
+    def __str__(self):
+        report_vars = ['scale', 'area_up', 'area_down', 'major_axis_mean',
+                       'minor_axis_mean', 'cut_width', 'cut_width_multi',
+                       'dmin', 'limits']
+        report = []
+        for name in report_vars:
+            report.append("%s: %s" % (name, str(getattr(self, name))))
+        return ', '.join(report)
+
+class EllipseFinder():
+    u"""Busca elipses del tamaño definido en la configuración."""
 
     def find_in(self, img_g, limits=None, max_thres=0.6, thresh_step=0.05,
                 dmin=None, show_settings=False):
@@ -136,183 +176,137 @@ class EllipseFinder():
 
         if len(img_g.shape) > 2:
             img_g = rgb2gray(img_g)
-        if limits:
-            # if np.diff(limits[1]) > 0:
-            #     limits = [list(np.flipud(limits[0])), list(np.flipud(limits[1]))]
-            angles, dists = limits
-            self.im_width = np.amin(img_g.shape)
-            scale = np.abs(np.diff(dists)) * self.im_width
-            self.scale = scale
-            self.limits = limits
-        else:
+        if not limits:
             return ('No busco sin bajalenguas', None)
-            # Si no hay una escala definida asumir que el ancho del bajalenguas
-            # ocupa un quinto del alto de la foto (asumida apaisada)
-        cut_width = int(self.TOL * self.STANDARD_MAJOR_AXIS * scale)
-        if cut_width <= 5:
+        p = SearchParams(img_g.shape, limits, dmin)
+        if p.cut_width <= 5:
             return ('Imagen con poca resolucion', None)
-        cut_width_multi = int(cut_width * 2)
-        all_centroids = []
-        all_aspects = []
-        all_real_centroids = []
-        all_corrs = []
-        all_contrasts = []
-        area_up = self.STANDARD_AREA * self.TOL * scale**2
-        area_down = self.STANDARD_AREA / self.TOL * scale**2
-        major_axis_up = self.STANDARD_MAJOR_AXIS * self.TOL * scale
-        major_axis_down = self.STANDARD_MAJOR_AXIS / self.TOL * scale
-        major_axis_mean = self.STANDARD_MAJOR_AXIS * scale
-        minor_axis_up = self.STANDARD_MINOR_AXIS * self.TOL * scale
-        minor_axis_down = self.STANDARD_MINOR_AXIS / self.TOL * scale
-        minor_axis_mean = self.STANDARD_MINOR_AXIS * scale
-        if not dmin:
-            dmin = 1.5 * minor_axis_mean
+
+        # Numpy array para los resultados
+        # Columnas: centroid_i, centroid_j, correlations, contrasts, aspects
+        res = np.array([[], [], [], [], []]).T
+        seen_centroids = []
         if show_settings:
-            report_vars = ['scale', 'area_up', 'area_down', 'major_axis_mean',
-                           'minor_axis_mean', 'cut_width', 'cut_width_multi',
-                           'dmin', 'limits']
-            for name in report_vars:
-                print(name, eval(name))
-        # MAIN LOOP
+            print(p)
+
+        # Loop Principal
         for th in np.arange(0, max_thres, thresh_step):
             binary = img_g < th
             labels = label(binary)
             regions = regionprops(labels)
             for region in regions:
-                if region.area < area_down or region.area > 4 * area_up:
+                if region.area < p.area_down or region.area > 4 * p.area_up:
                     continue
-                if not self._region_is_in_stick(region):
+                if not self._region_is_in_stick(region, p):
                     continue
-                # if abs(region.centroid[0] - 1240) < 30 and abs(region.centroid[1] - 3565) < 30:
-                #     print('encontre 1', region.area)
-                if len(all_centroids) == 0:
-                    D = np.inf
+                if len(seen_centroids) == 0:
+                    dist_mat = np.inf
                 else:
-                    D = pairwise_distances(np.array([region.centroid]),
-                                           np.vstack(all_centroids))
-                if np.all(D > dmin):  # Si es un centroide nuevo
-                    myreg = self.cut_region(region.centroid,
-                                            img_g,
-                                            delta=cut_width)
-                    recorte, new_region, labels, i_max_region = myreg
-                    if recorte is None:
+                    dist_mat = pairwise_distances(np.array([region.centroid]),
+                                                  np.vstack(seen_centroids))
+                if np.any(dist_mat < dmin):
+                    continue  # Solo sigue si es un centroide nuevo
+                myreg = self.cut_region(region.centroid, img_g, delta=p.cut_width)
+                recorte, new_region, labels, i_max_region = myreg
+                if recorte is None:
+                    continue
+                contrast = self.calculate_contrast(recorte, labels == (i_max_region + 1))
+                if contrast < 0.1:
+                    continue
+                # Si el area es compatible con un solo huevo
+                if region.area < p.area_up:
+                    if region.convex_area > region.area * 1.5:
+                        continue  # No seguir si la region es muy no-convexa
+                    min_ax = new_region.minor_axis_length
+                    maj_ax = new_region.major_axis_length
+                    aspect = np.float(maj_ax) / min_ax
+                    template = self.generate_template(p.minor_axis_mean,
+                                                      p.major_axis_mean,
+                                                      -new_region.orientation,
+                                                      (new_region.centroid[1], new_region.centroid[0]),
+                                                      2 * p.cut_width)
+                    correlation = self._nan_correlation(template, recorte)
+                    if correlation < 0.5:
                         continue
-                    # if abs(region.centroid[0] - 1240) < 30 and abs(region.centroid[1] - 3565) < 30:
-                    #     # print(correlation, self.STANDARD_MAJOR_AXIS)
-                    #     # plt.imshow(template)
-                    #     # plt.draw()
-                    #     # plt.waitforbuttonpress()
-                    #     # print(min_ax, maj_ax)
-                    #     plt.subplot(121)
-                    #     # plt.imshow(template)
-                    #     plt.subplot(122)
-                    #     plt.imshow(recorte)
-                    #     plt.draw()
-                    #     plt.waitforbuttonpress()
-                    contrast = self.calculate_contrast(recorte,
-                                                       labels == (i_max_region + 1))
-                    if contrast < 0.1:
+                    if cfg['debug_mode'] and correlation > 0.8:
+                        self._plot_debug(myreg)
+                    c_i = region.centroid[0] + new_region.centroid[0] - p.cut_width
+                    c_j = region.centroid[1] + new_region.centroid[1] - p.cut_width
+                    res = np.vstack([res, [c_i, c_j, correlation, contrast, aspect]])
+                    seen_centroids.append(region.centroid)
+
+                # Si creemos que hay varios pegados
+                elif region.area < 4 * p.area_up:
+                    myreg = self.cut_region(region.centroid, img_g,
+                                            delta=p.cut_width_multi, target_max=True)
+                    if myreg[0] is None:
                         continue
-                    # Si creemos que es uno solo
-                    if region.area < area_up:
-                        if region.convex_area > region.area * 1.5:
-                            continue
-                        # Divido por 1.7 porque el template no coincide exactamente
-                        # (ver si se puede corregir en el template)
-                        min_ax = new_region.minor_axis_length / 2
-                        maj_ax = new_region.major_axis_length / 2
-                        try:
-                            aspect = maj_ax / min_ax
-                        except ZeroDivisionError:
-                            aspect = np.inf
-                        if not isinstance(aspect, float):
-                            aspect = aspect[0]
-                        template = self.generate_template(minor_axis_mean,
-                                                          major_axis_mean,
-                                                          -new_region.orientation,
-                                                          (new_region.centroid[1], new_region.centroid[0]),
-                                                          2 * cut_width)
-                        correlation = self._nan_correlation(template, recorte)
-                        n_points = np.sum(~np.isnan(template))
-                        # correlation = self._correct_corr(correlation, n_points, 5)
-                        if correlation < 0.5:
-                            continue
-                        all_contrasts.append(contrast)
-                        all_corrs.append(correlation)
-                        c_i = region.centroid[0] + new_region.centroid[0] - cut_width
-                        c_j = region.centroid[1] + new_region.centroid[1] - cut_width
-                        all_centroids.append(region.centroid)
-                        all_real_centroids.append([c_i, c_j])
-                        all_aspects.append(aspect)
-                    # Si creemos que hay varios pegados
-                    elif region.area < 4 * area_up:
-                        recorte, new_region, labels, i_max_region = self.cut_region(region.centroid,
-                                                                                    img_g,
-                                                                                    delta=cut_width_multi,
-                                                                                    target_max=True)
-                        if recorte is None:
-                            continue
-                        mask = (labels == i_max_region + 1)
-                        idx = np.flatnonzero(mask)
-                        i, j = np.unravel_index(idx, mask.shape)
-                        X = np.vstack((j, i)).T
-                        temp_xcorrs = []
-                        try_eggs = [2, 3, 4]
-                        temp_aspects = [[] for x in try_eggs]
-                        temp_centroids = [[] for x in try_eggs]
-                        for iegg, eggnum in enumerate(try_eggs):
-                            gm = GaussianMixture(n_components=eggnum)
-                            gm.fit(X)
-                            templates = []
-                            for n, covariances in enumerate(gm.covariances_):
-                                v, w = np.linalg.eigh(covariances)
-                                u = w[0] / np.linalg.norm(w[0])
-                                angle = np.arctan2(u[1], u[0])
-                                v = 2. * np.sqrt(2.) * np.sqrt(v)
-                                aspect = v[1] / v[0]
-                                if not isinstance(aspect, float):
-                                    aspect = aspect[0]
-                                temp_aspects[iegg].append(aspect)
-                                temp_centroids[iegg].append(np.flipud(gm.means_[n,:2]))
-                                t = self.generate_template(minor_axis_mean, major_axis_mean,
-                                                           np.pi / 2 + angle,
-                                                           gm.means_[n, :2], 2 * cut_width_multi)
-                                t[np.isnan(t)] = np.inf
-                                templates.append(t)
-                            templates = np.dstack(templates)
-                            template = np.amin(templates, -1)
-                            template[np.isinf(template)] = np.nan
-                            correlation = self._nan_correlation(template, recorte)
-                            n_points = np.sum(~np.isnan(template))
-                            k_params = eggnum * 5
-                            # if abs(region.centroid[0] - 1056) < 30 and abs(region.centroid[1] - 2340) < 30:
-                            #     print(correlation, self.STANDARD_MAJOR_AXIS)
-                            #     plt.subplot(121)
-                            #     plt.cla()
-                            #     plt.imshow(recorte)
-                            #     plt.subplot(122)
-                            #     plt.cla()
-                            #     plt.imshow(template)
-                            #     plt.draw()
-                            #     plt.waitforbuttonpress()
-                            # correlation = self._correct_corr(correlation, n_points, k_params)
-                            temp_xcorrs.append(correlation)
-                        i_max_corrs = np.argmax(temp_xcorrs)
-                        max_corr = temp_xcorrs[i_max_corrs]
-                        if max_corr < 0.5:
-                            continue
-                        all_corrs += [max_corr] * try_eggs[i_max_corrs]
-                        all_aspects = all_aspects + temp_aspects[i_max_corrs]
-                        all_contrasts += [contrast] * try_eggs[i_max_corrs]
-                        all_centroids.append(region.centroid)
-                        referenced_centroids = [(region.centroid[0] - cut_width_multi + c[0],
-                                                 region.centroid[1] - cut_width_multi + c[1])
-                                                for c in temp_centroids[i_max_corrs]
-                                                ]
-                        all_real_centroids += referenced_centroids
-        out_data = (all_real_centroids, all_corrs, all_contrasts,
-                    all_aspects)
-        return ('Status OK', out_data)
+                    out = self._correlate_many_eggs(myreg, p)
+                    temp_xcorrs, temp_aspects, temp_centroids = out
+                    i_max_corrs = np.argmax(temp_xcorrs)
+                    max_corr = temp_xcorrs[i_max_corrs]
+                    if max_corr < 0.5:
+                        continue
+                    if cfg['debug_mode'] and max_corr > 0.8:
+                        self._plot_debug(myreg)
+                    # Agregar los resultados   TERMINAR!
+                    add_corrs = [max_corr] * p.TRY_EGGS[i_max_corrs]
+                    add_aspects = temp_aspects[i_max_corrs]
+                    add_contrasts = [contrast] * p.TRY_EGGS[i_max_corrs]
+                    referenced_centroids = [(region.centroid[0] - p.cut_width_multi + c[0],
+                                            region.centroid[1] - p.cut_width_multi + c[1])
+                                            for c in temp_centroids[i_max_corrs]
+                                            ]
+                    referenced_centroids = np.array(referenced_centroids).T
+                    add_centroids_i, add_centroids_j = referenced_centroids
+                    add_res = np.vstack([add_centroids_i, add_centroids_j,
+                                         add_corrs, add_contrasts, add_aspects]).T
+                    res = np.vstack([res, add_res])
+                    seen_centroids.append(region.centroid)
+        return ('Status OK', res)
+
+    def _plot_debug(self, myreg):
+        recorte, new_region, labels, i_max_region = myreg
+        plt.imshow(recorte)
+        plt.draw()
+        plt.waitforbuttonpress()
+
+    def _correlate_many_eggs(self, myreg, params):
+        """Calcula las correlaciones probando con templates de distinta
+        cantidad de huevos. """
+        recorte, new_region, labels, i_max_region = myreg
+        mask = (labels == i_max_region + 1)
+        idx = np.flatnonzero(mask)
+        i, j = np.unravel_index(idx, mask.shape)
+        X = np.vstack((j, i)).T
+        temp_xcorrs = []
+        temp_aspects = [[] for x in params.TRY_EGGS]
+        temp_centroids = [[] for x in params.TRY_EGGS]
+        for iegg, eggnum in enumerate(params.TRY_EGGS):
+            gm = GaussianMixture(n_components=eggnum)
+            gm.fit(X)
+            templates = []
+            for n, covariances in enumerate(gm.covariances_):
+                v, w = np.linalg.eigh(covariances)
+                u = w[0] / np.linalg.norm(w[0])
+                angle = np.arctan2(u[1], u[0])
+                v = 2. * np.sqrt(2.) * np.sqrt(v)
+                aspect = v[1] / v[0]
+                if not isinstance(aspect, float):
+                    aspect = aspect[0]
+                temp_aspects[iegg].append(aspect)
+                temp_centroids[iegg].append(np.flipud(gm.means_[n, :2]))
+                t = self.generate_template(params.minor_axis_mean, params.major_axis_mean,
+                                           np.pi / 2 + angle,
+                                           gm.means_[n, :2], 2 * params.cut_width_multi)
+                t[np.isnan(t)] = np.inf
+                templates.append(t)
+            templates = np.dstack(templates)
+            template = np.amin(templates, -1)
+            template[np.isinf(template)] = np.nan
+            correlation = self._nan_correlation(recorte, template)
+            temp_xcorrs.append(correlation)
+        return temp_xcorrs, temp_aspects, temp_centroids
 
     @staticmethod
     def _correct_corr(R, n, k):
@@ -369,11 +363,11 @@ class EllipseFinder():
         contrast = (Imax - Imin) / (Imax + Imin)
         return contrast
 
-    def _region_is_in_stick(self, region):
+    def _region_is_in_stick(self, region, params):
         ylimits = []
         ys, xs = region.centroid
-        for angle, dist in zip(*self.limits):
-            yl = -np.cos(angle) / np.sin(angle) * xs + dist / np.sin(angle) * self.im_width
+        for angle, dist in zip(*params.limits):
+            yl = -np.cos(angle) / np.sin(angle) * xs + dist / np.sin(angle)
             ylimits.append(yl)
         point_in_stick = (ys > (ylimits[0] - 20)) & (ys < (ylimits[1] + 20))
         return point_in_stick

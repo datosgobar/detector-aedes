@@ -89,6 +89,7 @@ class AedesDetector():
                 self.classify(method='Thresholds')
             else:
                 self.egg_count = None
+                self.doubt_count = None
             self.output_connector.write_output(image_id,
                                                self.stick_status + ' / ' + finder_status,
                                                self.egg_count, self.doubt_count)
@@ -100,11 +101,10 @@ class AedesDetector():
                                                None, None)
 
     def classify(self, method='Threshods'):
-        all_real_centroids, all_corrs, all_contrasts, all_aspects = self.egg_props
-        self.all_real_centroids = all_real_centroids
-        self.good_points = (np.array(all_corrs) > 0.8)
-        self.good_points = self.good_points & (np.array(all_contrasts) > 0.3)
-        self.semi_points = (np.array(all_corrs) > 0.8) & (np.array(all_contrasts) <= 0.3)
+        centroids_i, centroids_j, correlations, contrasts, aspects = self.egg_props.T
+        self.centroids = zip(centroids_i, centroids_j)
+        self.good_points = (correlations > 0.8) & (contrasts > 0.3)
+        self.semi_points = (correlations > 0.8) & (contrasts <= 0.3)
         self.egg_count = np.sum(self.good_points)
         self.doubt_count = np.sum(self.semi_points)
 
@@ -167,13 +167,12 @@ class AedesDetector():
                 y1 = (dist - self.image.shape[1] * np.cos(angle)) / np.sin(angle)
                 ax.plot((0, self.image.shape[1]), (y0, y1), '-',
                          color=['r', 'g'][count], linewidth=0.5)
-        if len(self.egg_props[0]) > 0:
-            centers = np.vstack(self.egg_props[0])
+        if len(self.centroids) > 0:
+            centers = np.vstack(self.centroids)
             ax.scatter(centers[self.good_points, 1],
                        centers[self.good_points, 0],
                        s=80, marker='x',
                        color='r')
-            centers = np.vstack(self.egg_props[0])
             ax.scatter(centers[self.semi_points, 1],
                        centers[self.semi_points, 0],
                        s=80, marker='x',
@@ -182,7 +181,7 @@ class AedesDetector():
             #     if q:
             #         ax.text(c[1], c[0], cont)
         ax2 = self.fig.add_subplot(122)
-        ax2.plot(self.egg_props[1], self.egg_props[2], '.')
+        ax2.plot(self.egg_props[:, 2], self.egg_props[:, 3], '.')
         self.fig.canvas.draw()
         while not self.next_figure:
             self.fig.waitforbuttonpress()
