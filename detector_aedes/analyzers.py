@@ -204,8 +204,9 @@ class EllipseFinder():
                 else:
                     dist_mat = pairwise_distances(np.array([region.centroid]),
                                                   np.vstack(seen_centroids))
-                if np.any(dist_mat < dmin):
+                if np.any(dist_mat < p.dmin):
                     continue  # Solo sigue si es un centroide nuevo
+                seen_centroids.append(region.centroid)
                 myreg = self.cut_region(region.centroid, img_g, delta=p.cut_width)
                 recorte, new_region, labels, i_max_region = myreg
                 if recorte is None:
@@ -219,7 +220,10 @@ class EllipseFinder():
                         continue  # No seguir si la region es muy no-convexa
                     min_ax = new_region.minor_axis_length
                     maj_ax = new_region.major_axis_length
-                    aspect = np.float(maj_ax) / min_ax
+                    try:
+                        aspect = maj_ax / min_ax
+                    except ZeroDivisionError:
+                        aspect = np.nan
                     template = self.generate_template(p.minor_axis_mean,
                                                       p.major_axis_mean,
                                                       -new_region.orientation,
@@ -229,12 +233,10 @@ class EllipseFinder():
                     if correlation < 0.5:
                         continue
                     if cfg['debug_mode'] and correlation > 0.8:
-                        self._plot_debug(myreg)
+                        self._plot_debug(myreg, p, dist_mat)
                     c_i = region.centroid[0] + new_region.centroid[0] - p.cut_width
                     c_j = region.centroid[1] + new_region.centroid[1] - p.cut_width
                     res = np.vstack([res, [c_i, c_j, correlation, contrast, aspect]])
-                    seen_centroids.append(region.centroid)
-
                 # Si creemos que hay varios pegados
                 elif region.area < 4 * p.area_up:
                     myreg = self.cut_region(region.centroid, img_g,
@@ -248,7 +250,7 @@ class EllipseFinder():
                     if max_corr < 0.5:
                         continue
                     if cfg['debug_mode'] and max_corr > 0.8:
-                        self._plot_debug(myreg)
+                        self._plot_debug(myreg, p, dist_mat)
                     # Agregar los resultados   TERMINAR!
                     add_corrs = [max_corr] * p.TRY_EGGS[i_max_corrs]
                     add_aspects = temp_aspects[i_max_corrs]
@@ -262,10 +264,10 @@ class EllipseFinder():
                     add_res = np.vstack([add_centroids_i, add_centroids_j,
                                          add_corrs, add_contrasts, add_aspects]).T
                     res = np.vstack([res, add_res])
-                    seen_centroids.append(region.centroid)
+
         return ('Status OK', res)
 
-    def _plot_debug(self, myreg):
+    def _plot_debug(self, myreg, params, dist_mat):
         recorte, new_region, labels, i_max_region = myreg
         plt.imshow(recorte)
         plt.draw()
