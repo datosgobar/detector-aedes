@@ -14,6 +14,8 @@ deploy:
 sudo: false
 
 install:
+- apt-get install python-numpy
+- apt-get install python-scipy
 - pip install -r requirements.txt
 - pip install -r requirements_dev.txt
 - pip install python-coveralls
@@ -39,17 +41,3 @@ after_success:
 
 notifications:
   slack: ssipyga:yyz0hyWmiaoGGnprhjqDXUwk
-
-
-
-
-
-
-
-
-
-
-
-
-
-
