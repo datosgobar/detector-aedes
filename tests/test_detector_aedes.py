@@ -9,19 +9,46 @@ from __future__ import with_statement
 import unittest
 import nose
 
-import detector_aedes
-
+import detector_aedes as da
+import numpy as np
+from skimage.io import imread
 
 class DetectorAedesTestCase(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.img = imread('./test_data/test_image.png')
 
     def tearDown(self):
         pass
 
-    def test_something(self):
-        pass
+    def test_stick_finder(self):
+        sah = da.StickAnalizerHough()
+        sah.set_current_image(self.img)
+        status, limits = sah.get_limits()
+        assert(status == 'Con bajalenguas')
+
+    def test_egg_counter(self):
+        sah = da.StickAnalizerHough()
+        sah.set_current_image(self.img)
+        status, limits = sah.get_limits()
+        el = da.EllipseFinder()
+        status, out_data = el.find_in(self.img, limits=limits, max_thres=0.6)
+        centroids_i, centroids_j, correlations, contrasts, aspects = out_data.T
+        egg_count = np.sum((correlations > 0.8) & (contrasts > 0.4))
+        assert(egg_count == 3)
+
+    def test_main_process(self):
+        ic = da.FolderInputConnector('./test_data')
+        oc = da.FileOutputConnector('./test_data/test_out.csv')
+        aedes = da.AedesDetector(input_connector=ic, output_connector=oc)
+        aedes.process()
+        fsample = open('./test_data/sample_test_out.csv', 'r')
+        fout = open('./test_data/test_out.csv', 'r')
+        for l1, l2 in zip(fsample.readlines(), fout.readlines()):
+            assert(l1 == l2)
+        fsample.close()
+        fout.close()
+
 
 if __name__ == '__main__':
     nose.run(defaultTest=__name__)

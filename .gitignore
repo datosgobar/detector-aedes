@@ -11,3 +11,5 @@ prototipado
 
 #Temp notebook files
 *checkpoint.ipynb
+
+tests/test_data/test_out\.csv

@@ -34,7 +34,7 @@ cfg_images = cfg['images']
 
 
 class StickAnalizer():
-    """Clase de base para buscar el bajalenguas."""
+    """Clase base para buscar el bajalenguas."""
 
     def __init__(self, lowres_width=100):
         self.lowres_width = lowres_width
@@ -56,7 +56,18 @@ class StickAnalizerHough(StickAnalizer):
     """Busca lineas de Hough paralelas"""
 
     def get_limits(self, max_width_proportion=0.45):
-        """Busca dos lineas paralelas que correspondan al bajalenguas"""
+        """Busca dos lineas paralelas que correspondan al bajalenguas
+
+        Args:
+            max_width_proportion (float): Maxima proporcion del alto de la
+                imagen (considerada apaisada) que puede abarcar el ancho del
+                bajalenguas.
+        Returns:
+            status (str): Una descripcion del resultado de la busqueda.
+            limits ([angles, dists]): Contiene dos numpy arrays. El primero
+                contiene dos angulos y el segundo dos distancias. Cada par de
+                angulo-distancia define la recta de arriba y de abajo del bajalenguas.
+        """
         max_angle_diff = 5. / 180 * np.pi
         im_width = np.amin(self.curr_im_lowres_g.shape)
         min_dist = int(1. / 6 * im_width)
@@ -158,20 +169,22 @@ class EllipseFinder():
         ajustarlos por una o mas elipses
 
         Args:
-            - img_g (np.array): Imagen a analizar, si no es blanco y negro
+            img_g (np.array): Imagen a analizar, si no es blanco y negro
                 se convierte automaticamente.
-            - limits (number): Angulos y distancias de los bordes del
+            limits (number): Angulos y distancias de los bordes del
                 bajalenguas (segun se obtienen de `StickAnalizerHough`).
-            - max_thres (float, optional): Maximo valor de intenisdad a usar
+            max_thres (float, optional): Maximo valor de intenisdad a usar
                 como umbral para la imagen (0 es negro 1 es blanco)
-            - tresh_step (float, optional): Centroide de la elipse
-            - dmin (int, optional): Tamaño del template (matriz de `res` x `res`)
-            - show_settings (bool, optional): Tamaño del template (matriz de `res` x `res`
+            tresh_step (float, optional): Centroide de la elipse
+            dmin (int, optional): Tamaño del template (matriz de `res` x `res`)
+            show_settings (bool, optional): Tamaño del template (matriz de `res` x `res`
 
         Returns:
-            - template (`res` x `res` array): template de un huevo de acuerdo
-            a los parametrs dados.
-
+            status (str): Estado en el que termino la busqueda.
+            res (numpy.array): Array de Nx5 donde N es el numero de regiones
+                halladas. Las cinco columnas corresponden a las siguientes
+                propiedades de cada region: centroide_i, centroide_j,
+                correlacion, contraste, aspecto.
         """
 
         if len(img_g.shape) > 2:
@@ -315,9 +328,11 @@ class EllipseFinder():
         """Corrige la correlacion por cantidad de parametros.
 
         Args:
-            -R (float): correlacion
-            -n (int): cantidad de datos
-            -k (int): cantidad de parametros
+            R (float): Correlacion
+            n (int): Cantidad de datos
+            k (int): Cantidad de parametros
+        Returns:
+            corrected (float): El valor corregido de R
         """
         try:
             corrected = 1 - ((1 - R**2) * float(n - 1) / (n - k - 1))
@@ -327,6 +342,7 @@ class EllipseFinder():
 
     @staticmethod
     def _nan_correlation(matrix1, matrix2):
+        """Calcula la correlacion entre dos matrices excluyendo los valores nan."""
         x = matrix1.flatten()
         y = matrix2.flatten()
         gi = (~np.isnan(x)) & (~np.isnan(y))
@@ -335,6 +351,21 @@ class EllipseFinder():
 
     @staticmethod
     def cut_region(centroid, img, delta=15, target_max=False):
+        """Recorta una region cuadrada alrededor de un punto.
+
+        Luego de hacer el recorte se aplica un umbral con el metodo de Otsu
+        para binarizar la imagen. Se conserva solo la region mas grande o la
+        mas centra segun el valor de `target_max`
+
+        Args:
+            centroid (tuple of floats): Coordenadas (fila, columna) del centro
+                alredeor del cual se recorta.
+            img (numpy array): Imagen base a recortar.
+            delta (int): Se recorta una distancia de +- delta alredeor del centro
+            target_max (bool): Si es True, solo se conserva la region conexa
+                mas grande. Si es False, se conserva la region conexa que esta
+                en el centro.
+        """
         i = int(centroid[0])
         i_min = i - delta
         i_max = i + delta
@@ -360,12 +391,14 @@ class EllipseFinder():
 
     @staticmethod
     def calculate_contrast(img, mask):
+        """Calcula el contraste en una imagen en base a una mascara."""
         Imin = np.mean(img[mask])
         Imax = np.mean(img[~mask])
         contrast = (Imax - Imin) / (Imax + Imin)
         return contrast
 
     def _region_is_in_stick(self, region, params):
+        """Decide si una dada region esta o no dentro del bajalenguas."""
         ylimits = []
         ys, xs = region.centroid
         for angle, dist in zip(*params.limits):

@@ -94,6 +94,7 @@ class FileOutputConnector():
     def __init__(self, file_name):
         self.file_name = file_name
         self.file_handle = open(file_name, 'w')
+        self.write_output('image_id', 'status', 'cant_huevos', 'cant_dudoso')
         self.file_handle.close()
 
     def write_output(self, image_id, status, egg_count, doubt_count):

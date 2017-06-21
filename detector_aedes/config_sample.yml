@@ -32,6 +32,8 @@ stick:
 
 eggs:
   geometry:
-    major_axis: 0.0112 # Expresado en proporcion al ancho del bajalenguas
-    minor_axis: 0.00558 # Expresado en proporcion al ancho del bajalenguas
-  tolerance: 50 # Se toleran variaciones de +- 50%
+    major_axis: 0.0185 # Expresado en proporcion al ancho del bajalenguas
+    minor_axis: 0.005 # Expresado en proporcion al ancho del bajalenguas
+  tolerance: 70 # Se toleran variaciones de +- 70%
+
+debug_mode: False

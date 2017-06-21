@@ -42,9 +42,6 @@ class AedesDetector():
                 ):
         """Función principal para procesar las imágenes disponibles.
 
-        `process(self, image_id=None, show_results=False, start_from=0)`
-
-
         Args:
             image_id (str, optional): Este parametro debe corresponder al ID de
                 una imagen. Si está definido se procesa solo esa imagen.
@@ -108,24 +105,25 @@ class AedesDetector():
         self.egg_count = np.sum(self.good_points)
         self.doubt_count = np.sum(self.semi_points)
 
-    def train_model(self, trainsamples=None, show_mask=False):
-        self.egg_finder.start_trainning()
-        if isinstance(trainsamples, list):
-            samples = trainsamples
-        else:
-            im_ids = self.input_connector.get_image_ids()
-            if len(im_ids) < trainsamples:
-                raise ValueError('No hay suficientes imagenes para entrenar.\
-                                 (Nfiles=%i)' % len(im_ids))
-            samples = np.random.choice(im_ids, trainsamples,
-                                       replace=False)  # Imagenes al azar
-        for im_id in samples:
-            image = self.input_connector.get_image(im_id)
-            self.stick_analizer.set_current_image(image)
-            self.clipped_image = self.stick_analizer.get_clipped_image()
-            self.egg_finder.find_in(self.clipped_image)
-            self.plot_selector(show_mask=show_mask)
-        self.egg_finder.save_model()
+    # FUNCION DE ENTRENAMIENTO DEL CLASIFICADOR (DEPRECADO)
+    #    def train_model(self, trainsamples=None, show_mask=False):
+    #     self.egg_finder.start_trainning()
+    #     if isinstance(trainsamples, list):
+    #         samples = trainsamples
+    #     else:
+    #         im_ids = self.input_connector.get_image_ids()
+    #         if len(im_ids) < trainsamples:
+    #             raise ValueError('No hay suficientes imagenes para entrenar.\
+    #                              (Nfiles=%i)' % len(im_ids))
+    #         samples = np.random.choice(im_ids, trainsamples,
+    #                                    replace=False)  # Imagenes al azar
+    #     for im_id in samples:
+    #         image = self.input_connector.get_image(im_id)
+    #         self.stick_analizer.set_current_image(image)
+    #         self.clipped_image = self.stick_analizer.get_clipped_image()
+    #         self.egg_finder.find_in(self.clipped_image)
+    #         self.plot_selector(show_mask=show_mask)
+    #     self.egg_finder.save_model()
 
     def _handle_fig_event(self, event):
         "Función interna para manejar eventos de ventanas en modo interactivo."
