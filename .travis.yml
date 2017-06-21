@@ -14,8 +14,8 @@ deploy:
 sudo: false
 
 install:
-- apt-get install python-numpy
-- apt-get install python-scipy
+- sudo apt-get install python-numpy
+- sudo apt-get install python-scipy
 - pip install -r requirements.txt
 - pip install -r requirements_dev.txt
 - pip install python-coveralls
