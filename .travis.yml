@@ -37,6 +37,7 @@ install:
   - conda install --yes --file requirements.txt
   - pip install -r requirements_dev.txt
   - pip install .
+  - mv ./detector_aedes/config_sample.yml ./detector_aedes/config.yml
 
 script:
 - source activate test
