@@ -39,7 +39,9 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Detector Aedes 0.1.0 documentation" href="index.html"/> 
+    <link rel="top" title="Detector Aedes 0.1.0 documentation" href="index.html"/>
+        <link rel="next" title="History" href="HISTORY.html"/>
+        <link rel="prev" title="Detector Aedes" href="README.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -88,8 +90,42 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">Detector Aedes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Manual de uso del módulo <code class="docutils literal"><span class="pre">detector_aedes</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contexto">Contexto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#funcionalidades">Funcionalidades</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#metodos-de-validacion-de-metadatos">Métodos de validación de metadatos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metodos-de-transformacion-de-formatos-de-metadatos">Métodos de transformación de formatos de metadatos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metodos-de-generacion-de-reportes">Métodos de generación de reportes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#para-federacion-de-datasets">Para federación de datasets</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#para-presentacion-de-catalogos-y-datasets">Para presentación de catálogos y datasets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#uso">Uso</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#validacion-de-catalogos">Validación de catálogos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transformacion-de-data-xlsx-a-data-json">Transformación de <code class="docutils literal"><span class="pre">data.xlsx</span></code> a <code class="docutils literal"><span class="pre">data.json</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generacion-de-reportes">Generación de reportes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#crear-un-archivo-de-configuracion-eligiendo-manualmente-los-datasets-a-federar">Crear un archivo de configuración eligiendo manualmente los datasets a federar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#crear-un-archivo-de-configuracion-que-incluya-unicamente-los-datasets-con-metadata-valida">Crear un archivo de configuración que incluya únicamente los datasets con metadata válida</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modificar-catalogos-para-conservar-unicamente-los-datasets-validos">Modificar catálogos para conservar únicamente los datasets válidos</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#anexo-i-estructura-de-respuestas">Anexo I: Estructura de respuestas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#validate-catalog">validate_catalog()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-datasets-report">generate_datasets_report()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-harvester-config">generate_harvester_config()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-datasets-summary">generate_datasets_summary()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-catalog-readme">generate_catalog_readme()</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="HISTORY.html">History</a></li>
 </ul>
 
@@ -142,11 +178,10 @@
 </div>
 <div class="section" id="funcionalidades">
 <span id="funcionalidades"></span><h2>Funcionalidades<a class="headerlink" href="#funcionalidades" title="Permalink to this headline">¶</a></h2>
-<p>La librería cuenta con funciones para tres objetivos principales:</p>
+<p>La librería cuenta con funciones para dos objetivos principales:</p>
 <ul class="simple">
-<li><strong>validación de metadatos de catálogos</strong> y los datasets,</li>
-<li><strong>generación de reportes</strong> sobre el contenido y la validez de los metadatos de catálogos y datasets, y</li>
-<li><strong>transformación de archivos de metadatos</strong> al formato estándar (JSON).</li>
+<li><strong>Encontrar un bajalenguas en la imagen</strong></li>
+<li><strong>Buscar Elipses oscuras dentro del bajalenguas</strong></li>
 </ul>
 <p>Como se menciona en el Glosario estos métodos no tienen acceso <em>directo</em> a ningún catálogo, dataset ni distribución, sino únicamente a sus <em>representaciones externas</em>: archivos o partes de archivos en formato JSON que describen ciertas propiedades. Por conveniencia, en este documento se usan frases como &#8220;validar el dataset X&#8221;, cuando una versión más precisa sería &#8220;validar la fracción del archivo <code class="docutils literal"><span class="pre">data.json</span></code> que consiste en una representación del dataset X en forma de diccionario&#8221;. La diferencia es sutil, pero conviene mantenerla presente.</p>
 <p>Todos los métodos públicos de la librería toman como primer parámetro <code class="docutils literal"><span class="pre">catalog</span></code>:</p>
@@ -573,6 +608,15 @@ Por favor, consulte el informe [`datasets.csv`](datasets.csv).
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="HISTORY.html" class="btn btn-neutral float-right" title="History" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="README.html" class="btn btn-neutral" title="Detector Aedes" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

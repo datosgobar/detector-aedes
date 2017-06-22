@@ -6,7 +6,7 @@
 [![Stories in Ready](https://badge.waffle.io/datosgobar/detector-aedes.png?label=ready&title=Ready)](https://waffle.io/datosgobar/detector-aedes)
 [![Documentation Status](http://readthedocs.org/projects/detector-aedes/badge/?version=latest)](http://detector-aedes.readthedocs.org/en/latest/?badge=latest)
 
-Algoritmos de Visión Computacional para analizar imágenes de Ovisensores. Edit
+Algoritmos de Visión Computacional para analizar imágenes de Ovisensores. 
 
 
 * Licencia: MIT license

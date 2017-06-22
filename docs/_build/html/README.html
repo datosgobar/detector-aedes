@@ -40,7 +40,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Detector Aedes 0.1.0 documentation" href="index.html"/>
-        <link rel="next" title="History" href="HISTORY.html"/>
+        <link rel="next" title="Manual de uso del módulo detector_aedes" href="MANUAL.html"/>
         <link rel="prev" title="Welcome to Detector Aedes’s documentation!" href="index.html"/> 
 
   
@@ -92,13 +92,17 @@
             
                 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Detector Aedes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#instalacion">Instalación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#instalacion">Instalación</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#instalacion-de-desarrollo">Instalacion de Desarrollo</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#uso">Uso</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tests">Tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#creditos">Créditos</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#contacto">Contacto</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="MANUAL.html">Manual de uso del módulo <code class="docutils literal"><span class="pre">detector_aedes</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="HISTORY.html">History</a></li>
 </ul>
 
@@ -158,26 +162,58 @@
 </ul>
 <div class="section" id="instalacion">
 <span id="instalacion"></span><h2>Instalación<a class="headerlink" href="#instalacion" title="Permalink to this headline">¶</a></h2>
-<p><em>AYUDA: ¿Qué dependencias del sistema son necesarias? ¿Tests/pruebas post instalación? Usar screenshots/gifs (si cabe).</em></p>
-<ul class="simple">
-<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">path/to/detector-aedes</span></code> y <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> para instalar el repo clonado localmente en <em>modo developer</em> (cualquier cambio en el código está disponible en el entorno virtual donde fue instalado).</li>
-</ul>
+<p>El paquete se encuentra disponible en pip:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install detector_aedes
+</pre></div>
+</div>
+<div class="section" id="instalacion-de-desarrollo">
+<span id="instalacion-de-desarrollo"></span><h3>Instalacion de Desarrollo<a class="headerlink" href="#instalacion-de-desarrollo" title="Permalink to this headline">¶</a></h3>
+<p>Para instalar en modo desarrollo ir a la carpeta en la que fue clonado el reporsitorio:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> path/to/detector-aedes
+</pre></div>
+</div>
+<p>y luego instalar los requerimientos con:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install -r requirements.txt
+$ pip install -r requirements_dev.txt
+</pre></div>
+</div>
+<p>finalmente instalar el paquete en modo desarrollo con:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install -e .
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="uso">
 <span id="uso"></span><h2>Uso<a class="headerlink" href="#uso" title="Permalink to this headline">¶</a></h2>
-<p><em>AYUDA: Ejemplo rápido. Usar screenshots/gifs (si cabe).</em></p>
+<p>El siguiente es un ejemplo de uso rapido que recorre todas las imagenes de una
+carpeta y graba la salida a un archivo CSV:</p>
+<div class="highlight-Python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">detector_aedes</span> <span class="kn">import</span> <span class="n">AedesDetector</span><span class="p">,</span> <span class="n">FolderInputConnector</span><span class="p">,</span> <span class="n">FileOutputConnector</span>
+<span class="n">ic</span> <span class="o">=</span> <span class="n">FolderInputConnector</span><span class="p">(</span><span class="s1">&#39;/carpeta/que/contenga/imagenes&#39;</span><span class="p">)</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="n">FileOutputConnector</span><span class="p">(</span><span class="s1">&#39;/ruta/a/archivo/de/salida.csv&#39;</span><span class="p">)</span>
+<span class="n">ad</span> <span class="o">=</span> <span class="n">AedesDetector</span><span class="p">(</span><span class="n">input_connector</span><span class="o">=</span><span class="n">ic</span><span class="p">,</span> <span class="n">output_connector</span><span class="o">=</span><span class="n">fc</span><span class="p">)</span>
+<span class="n">ad</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">show_results</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Para una descripcion mas detallada referirse al <a class="reference external" href="docs/MANUAL.md">Manual de Uso</a></p>
 </div>
 <div class="section" id="tests">
 <span id="tests"></span><h2>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
-<p><em>AYUDA: ¿Cómo correr los tests? ¿Cómo me instalo dependencias para los tests?</em></p>
+<p>Para correr los tests hace falta instalar las dependencias de desarrollo:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ pip install -r requirements_dev.txt
+</pre></div>
+</div>
+<p>y luego correr los tests con:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ nosetests
+</pre></div>
+</div>
 </div>
 <div class="section" id="creditos">
 <span id="creditos"></span><h2>Créditos<a class="headerlink" href="#creditos" title="Permalink to this headline">¶</a></h2>
-<p><em>AYUDA: ¿Usás código de otra persona/organización? ¿Alguien o algo fue una fuente de inspiración/asesoramiento/ayuda para este repositorio? ¿Es esto un fork?</em></p>
+<p>Agradecemos al Dr. Nicolas Schweigmann del Grupo de Estudio de Mosquitos de la UBA y al equipo de Epidemiología del GCBA por su ayuda en el desarrollo de este software.</p>
 </div>
 <div class="section" id="contacto">
 <span id="contacto"></span><h2>Contacto<a class="headerlink" href="#contacto" title="Permalink to this headline">¶</a></h2>
-<p>Te invitamos a [crearnos un issue](https://github.com/datosgobar/detector-aedes/issues/new?title=Encontre un bug en detector-aedes) en caso de que encuentres algún bug o tengas feedback de alguna parte de <code class="docutils literal"><span class="pre">detector-aedes</span></code>.</p>
+<p>Te invitamos a <a class="reference external" href="https://github.com/datosgobar/detector-aedes/issues/new?title=Encontre%20un%20bug%20en%20detector-aedes">crearnos un issue</a> en caso de que encuentres algún bug o tengas feedback de alguna parte de <code class="docutils literal"><span class="pre">detector-aedes</span></code>.</p>
 <p>Para todo lo demás, podés mandarnos tu comentario o consulta a <a class="reference external" href="mailto:datos&#37;&#52;&#48;modernizacion&#46;gob&#46;ar">datos<span>&#64;</span>modernizacion<span>&#46;</span>gob<span>&#46;</span>ar</a>.</p>
 </div>
 </div>
@@ -189,7 +225,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="HISTORY.html" class="btn btn-neutral float-right" title="History" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="MANUAL.html" class="btn btn-neutral float-right" title="Manual de uso del módulo detector_aedes" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Welcome to Detector Aedes’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

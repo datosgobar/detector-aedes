@@ -9,11 +9,9 @@ Manual de uso del módulo `detector_aedes`
 
 ## Funcionalidades
 
-La librería cuenta con funciones para tres objetivos principales:
-- **validación de metadatos de catálogos** y los datasets,
-- **generación de reportes** sobre el contenido y la validez de los metadatos de catálogos y datasets, y
-- **transformación de archivos de metadatos** al formato estándar (JSON).
-
+La librería cuenta con funciones para dos objetivos principales:
+- **Encontrar un bajalenguas en la imagen**
+- **Buscar Elipses oscuras dentro del bajalenguas**
 
 Como se menciona en el Glosario estos métodos no tienen acceso *directo* a ningún catálogo, dataset ni distribución, sino únicamente a sus *representaciones externas*: archivos o partes de archivos en formato JSON que describen ciertas propiedades. Por conveniencia, en este documento se usan frases como "validar el dataset X", cuando una versión más precisa sería "validar la fracción del archivo `data.json` que consiste en una representación del dataset X en forma de diccionario". La diferencia es sutil, pero conviene mantenerla presente.
 

@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    README.md
+   MANUAL.md
    HISTORY.md
 
 Indices and tables
