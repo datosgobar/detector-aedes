@@ -1,2 +1,2 @@
 image_id,status,cant_huevos,cant_dudoso
-./test_data/test_image.png,Con bajalenguas / Status OK,3,0
+/home/mec/MEGAsync/repo/detector-aedes/tests/test_data/test_image.png,Con bajalenguas / Status OK,3,0
