@@ -42,12 +42,12 @@ class DetectorAedesTestCase(unittest.TestCase):
         assert(egg_count == 3)
 
     def test_main_process(self):
-        ic = da.FolderInputConnector('./test_data')
-        oc = da.FileOutputConnector('./test_data/test_out.csv')
+        ic = da.FolderInputConnector(os.path.join(TEST_DIR, 'test_data'))
+        oc = da.FileOutputConnector(os.path.join(TEST_DIR, 'test_data', 'test_out.csv'))
         aedes = da.AedesDetector(input_connector=ic, output_connector=oc)
         aedes.process()
-        fsample = open('./test_data/sample_test_out.csv', 'r')
-        fout = open('./test_data/test_out.csv', 'r')
+        fsample = open(os.path.join(TEST_DIR, 'test_data', 'sample_test_out.csv'), 'r')
+        fout = open(os.path.join(TEST_DIR, 'test_data', 'test_out.csv'), 'r')
         for l1, l2 in zip(fsample.readlines(), fout.readlines()):
             assert(l1 == l2)
         fsample.close()
