@@ -12,7 +12,14 @@ deploy:
     repo: datosgobar/detector-aedes
 
 sudo: false
-
+cache: apt
+addons:
+  apt:
+    packages:
+    - libatlas-dev
+    - libatlas-base-dev
+    - liblapack-dev
+    - gfortran
 install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
       wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -25,14 +32,14 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q -n test python=$TRAVIS_PYTHON_VERSION
+  - conda create -q -n test python=$TRAVIS_PYTHON_VERSION pip nose
   - source activate test
   - conda install --yes --file requirements.txt
   - pip install -r requirements_dev.txt
-  - python setup.py install
-
+  - pip install .
 
 script:
+- source activate test
 - nosetests --with-coverage
 - travis-sphinx --source=docs -n build
 
