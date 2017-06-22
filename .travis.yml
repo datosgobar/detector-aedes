@@ -28,7 +28,7 @@ install:
   - conda create -q -n test python=$TRAVIS_PYTHON_VERSION
   - source activate test
   - conda install --yes --file requirements.txt
-  - conda install --yes --file requirements_dev.txt
+  - pip install -r requirements_dev.txt
   - python setup.py install
 
 
