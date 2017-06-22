@@ -15,24 +15,62 @@ Algoritmos de Visión Computacional para analizar imágenes de Ovisensores. Edit
 
 ## Instalación
 
-*AYUDA: ¿Qué dependencias del sistema son necesarias? ¿Tests/pruebas post instalación? Usar screenshots/gifs (si cabe).*
+El paquete se encuentra disponible en pip:
 
-* `cd path/to/detector-aedes` y `pip install -e .` para instalar el repo clonado localmente en *modo developer* (cualquier cambio en el código está disponible en el entorno virtual donde fue instalado).
+```bash
+$ pip install detector_aedes
+```
+
+### Instalacion de Desarrollo
+
+Para instalar en modo desarrollo ir a la carpeta en la que fue clonado el reporsitorio:
+
+```bash
+$ cd path/to/detector-aedes
+```
+y luego instalar los requerimientos con:
+
+```bash
+$ pip install -r requirements.txt
+$ pip install -r requirements_dev.txt
+```
+finalmente instalar el paquete en modo desarrollo con:
+```bash
+$ pip install -e .
+```
 
 ## Uso
 
-*AYUDA: Ejemplo rápido. Usar screenshots/gifs (si cabe).*
+El siguiente es un ejemplo de uso rapido que recorre todas las imagenes de una
+carpeta y graba la salida a un archivo CSV:
+```Python
+from detector_aedes import AedesDetector, FolderInputConnector, FileOutputConnector
+ic = FolderInputConnector('/carpeta/que/contenga/imagenes')
+fc = FileOutputConnector('/ruta/a/archivo/de/salida.csv')
+ad = AedesDetector(input_connector=ic, output_connector=fc)
+ad.process(show_results=False)
+```
+Para una descripcion mas detallada referirse al [Manual de Uso](docs/MANUAL.md)
 
 ## Tests
 
-*AYUDA: ¿Cómo correr los tests? ¿Cómo me instalo dependencias para los tests?*
+Para correr los tests hace falta instalar las dependencias de desarrollo:
+
+```bash
+$ pip install -r requirements_dev.txt
+```
+y luego correr los tests con:
+
+```bash
+$ nosetests
+```
 
 ## Créditos
 
-*AYUDA: ¿Usás código de otra persona/organización? ¿Alguien o algo fue una fuente de inspiración/asesoramiento/ayuda para este repositorio? ¿Es esto un fork?*
+Agradecemos al Dr. Nicolas Schweigmann del Grupo de Estudio de Mosquitos de la UBA y al equipo de Epidemiología del GCBA por su ayuda en el desarrollo de este software.
 
 ## Contacto
 
-Te invitamos a [crearnos un issue](https://github.com/datosgobar/detector-aedes/issues/new?title=Encontre un bug en detector-aedes) en caso de que encuentres algún bug o tengas feedback de alguna parte de `detector-aedes`.
+Te invitamos a [crearnos un issue](https://github.com/datosgobar/detector-aedes/issues/new?title=Encontre%20un%20bug%20en%20detector-aedes) en caso de que encuentres algún bug o tengas feedback de alguna parte de `detector-aedes`.
 
 Para todo lo demás, podés mandarnos tu comentario o consulta a [datos@modernizacion.gob.ar](mailto:datos@modernizacion.gob.ar).
