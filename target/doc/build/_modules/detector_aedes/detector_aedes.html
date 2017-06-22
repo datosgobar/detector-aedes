@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>detector_aedes.detector_aedes &mdash; Detector Aedes 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="https://media.readthedocs.org/css/sphinx_rtd_theme.css" type="text/css" />
+  
+    <link rel="stylesheet" href="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Detector Aedes 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Detector Aedes
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Detector Aedes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../HISTORY.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Detector Aedes</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>detector_aedes.detector_aedes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for detector_aedes.detector_aedes</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;One liner</span>
+
+<span class="sd">Description....</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">with_statement</span>
+
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">analyzers</span> <span class="k">import</span> <span class="n">StickAnalizerHough</span><span class="p">,</span> <span class="n">EllipseFinder</span>
+
+
+<div class="viewcode-block" id="AedesDetector"><a class="viewcode-back" href="../../detector_aedes.html#detector_aedes.detector_aedes.AedesDetector">[docs]</a><span class="k">class</span> <span class="nc">AedesDetector</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Detector de Huevos en Ovisensores.</span>
+
+<span class="sd">    `AedesDetector(input_connector, output_connector)`</span>
+<span class="sd">    Algoritmos de vision computacional para reconocer la presencia de</span>
+<span class="sd">    huevos en fotos de ovisensores.</span>
+
+<span class="sd">     Args:</span>
+<span class="sd">            input_connector (:obj:): Conector a la fuente de imagenes a</span>
+<span class="sd">                analizar.</span>
+<span class="sd">            output_connector (:obj:): Conector a la salida de los resulados del</span>
+<span class="sd">                análisis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_connector</span><span class="p">,</span> <span class="n">output_connector</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_connector</span> <span class="o">=</span> <span class="n">input_connector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_connector</span> <span class="o">=</span> <span class="n">output_connector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stick_analizer</span> <span class="o">=</span> <span class="n">StickAnalizerHough</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span> <span class="o">=</span> <span class="n">EllipseFinder</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AedesDetector.process"><a class="viewcode-back" href="../../detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.process">[docs]</a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">start_from</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Función principal para procesar las imágenes disponibles.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            image_id (str, optional): Este parametro debe corresponder al ID de</span>
+<span class="sd">                una imagen. Si está definido se procesa solo esa imagen.</span>
+<span class="sd">            show_results (bool, optional): Mostrar un gráfico del procesamiento</span>
+<span class="sd">                para cada imagen a medida que se procesan.</span>
+<span class="sd">            start_from (int, optional): Comienza a analizar a partir de la</span>
+<span class="sd">                imagen `start_from`-ésima imagen.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">image_id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_process_one_image</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">show_results</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plot_classification</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">image_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_connector</span><span class="o">.</span><span class="n">get_image_ids</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">image_id</span> <span class="ow">in</span> <span class="n">image_ids</span><span class="p">[</span><span class="n">start_from</span><span class="p">:]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Procesando </span><span class="si">{:s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_id</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_process_one_image</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">show_results</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plot_classification</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_process_one_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Función interna para procesar una sola imagen.</span>
+<span class="sd">        _process_one_image(self, image_id)</span>
+<span class="sd">        Args:</span>
+<span class="sd">            image_id (str): Debe corresponder a un ID de imagen en el</span>
+<span class="sd">            `input_connector`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_connector</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">image</span>
+        <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;La imagen </span><span class="si">{:s}</span><span class="s2"> no pudo ser cargada&quot;</span>
+                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">image_id</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stick_analizer</span><span class="o">.</span><span class="n">set_current_image</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stick_limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stick_analizer</span><span class="o">.</span><span class="n">get_limits</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span> <span class="o">!=</span> <span class="s1">&#39;Sin bajalenguas&#39;</span><span class="p">:</span>
+            <span class="n">finder_status</span><span class="p">,</span> <span class="n">egg_props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">find_in</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stick_limits</span><span class="p">,</span>
+                                                         <span class="n">show_settings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finder_status</span> <span class="o">=</span> <span class="n">finder_status</span>
+            <span class="k">if</span> <span class="n">finder_status</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Status OK&#39;</span><span class="p">,</span> <span class="s1">&#39;Early stop&#39;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">egg_props</span> <span class="o">=</span> <span class="n">egg_props</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;Thresholds&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">egg_count</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">doubt_count</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_connector</span><span class="o">.</span><span class="n">write_output</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span> <span class="o">+</span> <span class="s1">&#39; / &#39;</span> <span class="o">+</span> <span class="n">finder_status</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">egg_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">doubt_count</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_connector</span><span class="o">.</span><span class="n">write_output</span><span class="p">(</span><span class="n">image_id</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span><span class="p">,</span>
+                                               <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AedesDetector.classify"><a class="viewcode-back" href="../../detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.classify">[docs]</a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Threshods&#39;</span><span class="p">):</span>
+        <span class="n">centroids_i</span><span class="p">,</span> <span class="n">centroids_j</span><span class="p">,</span> <span class="n">correlations</span><span class="p">,</span> <span class="n">contrasts</span><span class="p">,</span> <span class="n">aspects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">egg_props</span><span class="o">.</span><span class="n">T</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centroids</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">centroids_i</span><span class="p">,</span> <span class="n">centroids_j</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">good_points</span> <span class="o">=</span> <span class="p">(</span><span class="n">correlations</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">contrasts</span> <span class="o">&gt;</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semi_points</span> <span class="o">=</span> <span class="p">(</span><span class="n">correlations</span> <span class="o">&gt;</span> <span class="mf">0.8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">contrasts</span> <span class="o">&lt;=</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">egg_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">good_points</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">doubt_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">semi_points</span><span class="p">)</span></div>
+
+    <span class="c1"># FUNCION DE ENTRENAMIENTO DEL CLASIFICADOR (DEPRECADO)</span>
+    <span class="c1">#    def train_model(self, trainsamples=None, show_mask=False):</span>
+    <span class="c1">#     self.egg_finder.start_trainning()</span>
+    <span class="c1">#     if isinstance(trainsamples, list):</span>
+    <span class="c1">#         samples = trainsamples</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         im_ids = self.input_connector.get_image_ids()</span>
+    <span class="c1">#         if len(im_ids) &lt; trainsamples:</span>
+    <span class="c1">#             raise ValueError(&#39;No hay suficientes imagenes para entrenar.\</span>
+    <span class="c1">#                              (Nfiles=%i)&#39; % len(im_ids))</span>
+    <span class="c1">#         samples = np.random.choice(im_ids, trainsamples,</span>
+    <span class="c1">#                                    replace=False)  # Imagenes al azar</span>
+    <span class="c1">#     for im_id in samples:</span>
+    <span class="c1">#         image = self.input_connector.get_image(im_id)</span>
+    <span class="c1">#         self.stick_analizer.set_current_image(image)</span>
+    <span class="c1">#         self.clipped_image = self.stick_analizer.get_clipped_image()</span>
+    <span class="c1">#         self.egg_finder.find_in(self.clipped_image)</span>
+    <span class="c1">#         self.plot_selector(show_mask=show_mask)</span>
+    <span class="c1">#     self.egg_finder.save_model()</span>
+
+    <span class="k">def</span> <span class="nf">_handle_fig_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="s2">&quot;Función interna para manejar eventos de ventanas en modo interactivo.&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;n&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_figure</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_figure</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_onpick</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="s2">&quot;Función interna para manejar eventos de ventanas en modo interactivo.&quot;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">artist</span><span class="o">.</span><span class="n">_edgecolors</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">ind</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_targets</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="AedesDetector.plot_classification"><a class="viewcode-back" href="../../detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.plot_classification">[docs]</a>    <span class="k">def</span> <span class="nf">plot_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;Graficar la clasificacion par una dada imágen&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span> <span class="o">==</span> <span class="s1">&#39;Sin bajalenguas&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No puedo graficar: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">stick_status</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">finder_status</span> <span class="o">!=</span> <span class="s1">&#39;Status OK&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No puedo graficar: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">finder_status</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;fig&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;key_press_event&#39;</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_fig_event</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;button_press_event&#39;</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_fig_event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_figure</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Presione N para continuar analizando la proxima foto.&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stick_limits</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">angle</span><span class="p">,</span> <span class="n">dist</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">stick_limits</span><span class="p">):</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">y0</span> <span class="o">=</span> <span class="p">(</span><span class="n">dist</span> <span class="o">-</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+                <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="n">dist</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">),</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
+                         <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">][</span><span class="n">count</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centroids</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">centers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">good_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                       <span class="n">centers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">good_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                       <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
+                       <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">centers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">semi_points</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                       <span class="n">centers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">semi_points</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                       <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
+                       <span class="n">color</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+            <span class="c1"># for c, q, cont in zip(centers, self.good_points, self.egg_props[2]):</span>
+            <span class="c1">#     if q:</span>
+            <span class="c1">#         ax.text(c[1], c[0], cont)</span>
+        <span class="n">ax2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+        <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_props</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">egg_props</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_figure</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">waitforbuttonpress</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AedesDetector.plot_selector"><a class="viewcode-back" href="../../detector_aedes.html#detector_aedes.detector_aedes.AedesDetector.plot_selector">[docs]</a>    <span class="k">def</span> <span class="nf">plot_selector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Graficar los puntos candidatos y permitir al usuario elegir los</span>
+<span class="sd">           positivos.</span>
+
+<span class="sd">           USO:</span>
+<span class="sd">                - Hacer click sobre todos los candidatos considerados positivos</span>
+<span class="sd">                (van a cambiar de color).</span>
+
+<span class="sd">                - Apretar N para pasar a la imagen siguiente</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_targets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">measures</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;fig&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;key_press_event&#39;</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_fig_event</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;button_press_event&#39;</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_fig_event</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;pick_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_onpick</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">((</span><span class="s1">&#39;Haga click en los objetivos. Apriete N para&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;pasar a la siguiente imagen.&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_figure</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">good_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clipped_image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_mask</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">measures</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">measures</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                   <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">type</span><span class="p">],</span>
+                   <span class="n">picker</span><span class="o">=</span><span class="mi">5</span>
+                   <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_figure</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">waitforbuttonpress</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">push_user_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">egg_finder</span><span class="o">.</span><span class="n">measures</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">temp_targets</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Datos Argentina.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

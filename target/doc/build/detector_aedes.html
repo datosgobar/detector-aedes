@@ -1,0 +1,745 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>detector_aedes package &mdash; Detector Aedes 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="https://media.readthedocs.org/css/sphinx_rtd_theme.css" type="text/css" />
+  
+    <link rel="stylesheet" href="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
+  
+    <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Detector Aedes 0.1.0 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Detector Aedes
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Detector Aedes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HISTORY.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Detector Aedes</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>detector_aedes package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/detector_aedes.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="detector-aedes-package">
+<h1>detector_aedes package<a class="headerlink" href="#detector-aedes-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-detector_aedes.analyzers">
+<span id="detector-aedes-analyzers-module"></span><h2>detector_aedes.analyzers module<a class="headerlink" href="#module-detector_aedes.analyzers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="detector_aedes.analyzers.EggFinder">
+<em class="property">class </em><code class="descclassname">detector_aedes.analyzers.</code><code class="descname">EggFinder</code><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.DATA_PATH">
+<code class="descname">DATA_PATH</code><em class="property"> = '/home/mec/MEGAsync/repo/detector-aedes/detector_aedes/models/aedes-data-model.pkl'</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.DATA_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.MODEL_PATH">
+<code class="descname">MODEL_PATH</code><em class="property"> = '/home/mec/MEGAsync/repo/detector-aedes/detector_aedes/models/aedes-model.pkl'</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.MODEL_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.STANDARD_AREA">
+<code class="descname">STANDARD_AREA</code><em class="property"> = 9.25e-05</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.STANDARD_AREA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.STANDARD_MAJOR_AXIS">
+<code class="descname">STANDARD_MAJOR_AXIS</code><em class="property"> = 0.0185</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.STANDARD_MAJOR_AXIS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.STANDARD_MINOR_AXIS">
+<code class="descname">STANDARD_MINOR_AXIS</code><em class="property"> = 0.005</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.STANDARD_MINOR_AXIS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.TOL">
+<code class="descname">TOL</code><em class="property"> = 1</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.TOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.EggFinder.base_path">
+<code class="descname">base_path</code><em class="property"> = '/home/mec/MEGAsync/repo/detector-aedes/detector_aedes'</em><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.base_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.classify">
+<code class="descname">classify</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.classify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.classify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.find_in">
+<code class="descname">find_in</code><span class="sig-paren">(</span><em>image</em>, <em>method='threshold'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.find_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.find_in" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.push_user_input">
+<code class="descname">push_user_input</code><span class="sig-paren">(</span><em>measures</em>, <em>targets</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.push_user_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.push_user_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.save_data">
+<code class="descname">save_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.save_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.save_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guardar datos de entrenamiento</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.save_model">
+<code class="descname">save_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.save_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guardar modelo entrenado</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.start_trainning">
+<code class="descname">start_trainning</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.start_trainning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.start_trainning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EggFinder.test_model">
+<code class="descname">test_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EggFinder.test_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EggFinder.test_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Medir el desempeño del clasificador</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.analyzers.EllipseFinder">
+<em class="property">class </em><code class="descclassname">detector_aedes.analyzers.</code><code class="descname">EllipseFinder</code><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EllipseFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EllipseFinder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Busca elipses del tamaño definido en la configuración.</p>
+<dl class="staticmethod">
+<dt id="detector_aedes.analyzers.EllipseFinder.calculate_contrast">
+<em class="property">static </em><code class="descname">calculate_contrast</code><span class="sig-paren">(</span><em>img</em>, <em>mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EllipseFinder.calculate_contrast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EllipseFinder.calculate_contrast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calcula el contraste en una imagen en base a una mascara.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="detector_aedes.analyzers.EllipseFinder.cut_region">
+<em class="property">static </em><code class="descname">cut_region</code><span class="sig-paren">(</span><em>centroid</em>, <em>img</em>, <em>delta=15</em>, <em>target_max=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EllipseFinder.cut_region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EllipseFinder.cut_region" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recorta una region cuadrada alrededor de un punto.</p>
+<p>Luego de hacer el recorte se aplica un umbral con el metodo de Otsu
+para binarizar la imagen. Se conserva solo la region mas grande o la
+mas centra segun el valor de <cite>target_max</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>centroid</strong> (<em>tuple of floats</em>) &#8211; Coordenadas (fila, columna) del centro
+alredeor del cual se recorta.</li>
+<li><strong>img</strong> (<em>numpy array</em>) &#8211; Imagen base a recortar.</li>
+<li><strong>delta</strong> (<em>int</em>) &#8211; Se recorta una distancia de +- delta alredeor del centro</li>
+<li><strong>target_max</strong> (<em>bool</em>) &#8211; Si es True, solo se conserva la region conexa
+mas grande. Si es False, se conserva la region conexa que esta
+en el centro.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.EllipseFinder.find_in">
+<code class="descname">find_in</code><span class="sig-paren">(</span><em>img_g</em>, <em>limits=None</em>, <em>max_thres=0.6</em>, <em>thresh_step=0.05</em>, <em>dmin=None</em>, <em>show_settings=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EllipseFinder.find_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EllipseFinder.find_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Busca elipses del tamaño definido en la configuración.</p>
+<p>Para esto aplica una serie sucesiva de umbrales entre 0 y <cite>max_thres</cite>
+de a pasos definidos por <cite>thresh_step</cite>. En cada etapa busca manchas
+conexas de tamanios definidos en el archivo de configuracion e intenta
+ajustarlos por una o mas elipses</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>img_g</strong> (<em>np.array</em>) &#8211; Imagen a analizar, si no es blanco y negro
+se convierte automaticamente.</li>
+<li><strong>limits</strong> (<em>number</em>) &#8211; Angulos y distancias de los bordes del
+bajalenguas (segun se obtienen de <cite>StickAnalizerHough</cite>).</li>
+<li><strong>max_thres</strong> (<em>float, optional</em>) &#8211; Maximo valor de intenisdad a usar
+como umbral para la imagen (0 es negro 1 es blanco)</li>
+<li><strong>tresh_step</strong> (<em>float, optional</em>) &#8211; Centroide de la elipse</li>
+<li><strong>dmin</strong> (<em>int, optional</em>) &#8211; Tamaño del template (matriz de <cite>res</cite> x <cite>res</cite>)</li>
+<li><strong>show_settings</strong> (<em>bool, optional</em>) &#8211; Tamaño del template (matriz de <cite>res</cite> x <cite>res</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>status</strong> &#8211; Estado en el que termino la busqueda.
+res (numpy.array): Array de Nx5 donde N es el numero de regiones</p>
+<blockquote>
+<div><p>halladas. Las cinco columnas corresponden a las siguientes
+propiedades de cada region: centroide_i, centroide_j,
+correlacion, contraste, aspecto.</p>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">str</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="detector_aedes.analyzers.EllipseFinder.generate_template">
+<em class="property">static </em><code class="descname">generate_template</code><span class="sig-paren">(</span><em>minor_axis</em>, <em>major_axis</em>, <em>angle</em>, <em>centroid</em>, <em>res</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#EllipseFinder.generate_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.EllipseFinder.generate_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crea un <cite>template</cite> de huevo.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>minor_axis</strong> (<em>-</em>) &#8211; Eje menor de la elipse.</li>
+<li><strong>major_axis</strong> (<em>-</em>) &#8211; Eje mayor de la elipse.</li>
+<li><strong>angle</strong> (<em>-</em>) &#8211; Angulo de la elipse.</li>
+<li><strong>centroid</strong> (<em>-</em>) &#8211; Centroide de la elipse</li>
+<li><strong>res</strong> (<em>-</em>) &#8211; Tamaño del template (matriz de <cite>res</cite> x <cite>res</cite>)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>- template</strong> &#8211; template de un huevo de acuerdo
+a los parametrs dados.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><cite>res</cite> x <cite>res</cite> array</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.analyzers.SearchParams">
+<em class="property">class </em><code class="descclassname">detector_aedes.analyzers.</code><code class="descname">SearchParams</code><span class="sig-paren">(</span><em>im_size</em>, <em>limits</em>, <em>dmin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#SearchParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.SearchParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parametros geometricos para EllipseFinder</p>
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.SearchParams.STANDARD_AREA">
+<code class="descname">STANDARD_AREA</code><em class="property"> = 7.264933011426397e-05</em><a class="headerlink" href="#detector_aedes.analyzers.SearchParams.STANDARD_AREA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.SearchParams.STANDARD_MAJOR_AXIS">
+<code class="descname">STANDARD_MAJOR_AXIS</code><em class="property"> = 0.0185</em><a class="headerlink" href="#detector_aedes.analyzers.SearchParams.STANDARD_MAJOR_AXIS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.SearchParams.STANDARD_MINOR_AXIS">
+<code class="descname">STANDARD_MINOR_AXIS</code><em class="property"> = 0.005</em><a class="headerlink" href="#detector_aedes.analyzers.SearchParams.STANDARD_MINOR_AXIS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.SearchParams.TOL">
+<code class="descname">TOL</code><em class="property"> = 1.7</em><a class="headerlink" href="#detector_aedes.analyzers.SearchParams.TOL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.analyzers.SearchParams.TRY_EGGS">
+<code class="descname">TRY_EGGS</code><em class="property"> = [2, 3, 4]</em><a class="headerlink" href="#detector_aedes.analyzers.SearchParams.TRY_EGGS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.analyzers.StickAnalizer">
+<em class="property">class </em><code class="descclassname">detector_aedes.analyzers.</code><code class="descname">StickAnalizer</code><span class="sig-paren">(</span><em>lowres_width=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clase base para buscar el bajalenguas.</p>
+<dl class="method">
+<dt id="detector_aedes.analyzers.StickAnalizer.set_current_image">
+<code class="descname">set_current_image</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizer.set_current_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizer.set_current_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Definir la imagen de trabajo.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.analyzers.StickAnalizerHough">
+<em class="property">class </em><code class="descclassname">detector_aedes.analyzers.</code><code class="descname">StickAnalizerHough</code><span class="sig-paren">(</span><em>lowres_width=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerHough"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerHough" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#detector_aedes.analyzers.StickAnalizer" title="detector_aedes.analyzers.StickAnalizer"><code class="xref py py-class docutils literal"><span class="pre">detector_aedes.analyzers.StickAnalizer</span></code></a></p>
+<p>Busca lineas de Hough paralelas</p>
+<dl class="method">
+<dt id="detector_aedes.analyzers.StickAnalizerHough.get_limits">
+<code class="descname">get_limits</code><span class="sig-paren">(</span><em>max_width_proportion=0.45</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerHough.get_limits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerHough.get_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Busca dos lineas paralelas que correspondan al bajalenguas</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>max_width_proportion</strong> (<em>float</em>) &#8211; Maxima proporcion del alto de la
+imagen (considerada apaisada) que puede abarcar el ancho del
+bajalenguas.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>status</strong> &#8211; Una descripcion del resultado de la busqueda.
+limits ([angles, dists]): Contiene dos numpy arrays. El primero<blockquote>
+<div>contiene dos angulos y el segundo dos distancias. Cada par de
+angulo-distancia define la recta de arriba y de abajo del bajalenguas.</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti">
+<em class="property">class </em><code class="descclassname">detector_aedes.analyzers.</code><code class="descname">StickAnalizerMulti</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#detector_aedes.analyzers.StickAnalizer" title="detector_aedes.analyzers.StickAnalizer"><code class="xref py py-class docutils literal"><span class="pre">detector_aedes.analyzers.StickAnalizer</span></code></a></p>
+<p>Busca el bajalenguas con tres metodos distintos.</p>
+<dl class="docutils">
+<dt>Los tres metodos son:</dt>
+<dd><ul class="first last simple">
+<li>A partir de los bordes.</li>
+<li>Por el color.</li>
+<li>Umbral de brillo.</li>
+</ul>
+</dd>
+</dl>
+<dl class="staticmethod">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti.binary_by_colors">
+<em class="property">static </em><code class="descname">binary_by_colors</code><span class="sig-paren">(</span><em>img</em>, <em>target_colors</em>, <em>thresh=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti.binary_by_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti.binary_by_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Segmentacion por color</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti.binary_by_edges">
+<em class="property">static </em><code class="descname">binary_by_edges</code><span class="sig-paren">(</span><em>img_g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti.binary_by_edges"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti.binary_by_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Segmentacion por bordes</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti.binary_by_thresholding">
+<em class="property">static </em><code class="descname">binary_by_thresholding</code><span class="sig-paren">(</span><em>img_g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti.binary_by_thresholding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti.binary_by_thresholding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Segmentacion por umbral de intensidad</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti.calculate_disparity">
+<code class="descname">calculate_disparity</code><span class="sig-paren">(</span><em>rprops</em>, <em>imarea</em>, <em>method='props'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti.calculate_disparity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti.calculate_disparity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calcula la disparidad entre todas las regiones candidatas y
+las propiedades objetivo elegidas en la configuracion</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rprops</strong> (<em>-</em>) &#8211; Lista de propiedades de las regiones candidatas</li>
+<li><strong>imarea</strong> (<em>-</em>) &#8211; Area de la imagen</li>
+<li><strong>method</strong> (<em>-</em>) &#8211; <p>Metodo a utilizar para comparar las
+regiones con el objetivo. (Puede ser <cite>props</cite> o <cite>hu</cite>)</p>
+<blockquote>
+<div><ul>
+<li><cite>props</cite>: usa tres propiedades geometricas.</li>
+<li><cite>hu</cite>: usa los hu-moments</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti.get_clipped_image">
+<code class="descname">get_clipped_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti.get_clipped_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti.get_clipped_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve la imagen recortada.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.analyzers.StickAnalizerMulti.polish_mask">
+<code class="descname">polish_mask</code><span class="sig-paren">(</span><em>binary_mask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/analyzers.html#StickAnalizerMulti.polish_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.analyzers.StickAnalizerMulti.polish_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Elije la mejor region y completa huecos</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-detector_aedes.connectors">
+<span id="detector-aedes-connectors-module"></span><h2>detector_aedes.connectors module<a class="headerlink" href="#module-detector_aedes.connectors" title="Permalink to this headline">¶</a></h2>
+<p>One liner</p>
+<p>Description....</p>
+<dl class="class">
+<dt id="detector_aedes.connectors.FileOutputConnector">
+<em class="property">class </em><code class="descclassname">detector_aedes.connectors.</code><code class="descname">FileOutputConnector</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#FileOutputConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.FileOutputConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple File Writer</p>
+<dl class="method">
+<dt id="detector_aedes.connectors.FileOutputConnector.write_output">
+<code class="descname">write_output</code><span class="sig-paren">(</span><em>image_id</em>, <em>status</em>, <em>egg_count</em>, <em>doubt_count</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#FileOutputConnector.write_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.FileOutputConnector.write_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Escribe una linea en el archivo CSV con id, status y cantidad</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.connectors.FolderInputConnector">
+<em class="property">class </em><code class="descclassname">detector_aedes.connectors.</code><code class="descname">FolderInputConnector</code><span class="sig-paren">(</span><em>base_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#FolderInputConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.FolderInputConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conector para obtener imagenes de la carpeta ubicada en base_path</p>
+<dl class="method">
+<dt id="detector_aedes.connectors.FolderInputConnector.get_image">
+<code class="descname">get_image</code><span class="sig-paren">(</span><em>fileid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#FolderInputConnector.get_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.FolderInputConnector.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve un numpy array con la imagen correspondiente a ese archivo</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.connectors.FolderInputConnector.get_image_ids">
+<code class="descname">get_image_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#FolderInputConnector.get_image_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.FolderInputConnector.get_image_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve una lista con todas los nombres de archivo de imagenes en
+la carpetas.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.connectors.FusionTablesOutputConnector">
+<em class="property">class </em><code class="descclassname">detector_aedes.connectors.</code><code class="descname">FusionTablesOutputConnector</code><a class="reference internal" href="_modules/detector_aedes/connectors.html#FusionTablesOutputConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.FusionTablesOutputConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.connectors.ODKInputConnector">
+<em class="property">class </em><code class="descclassname">detector_aedes.connectors.</code><code class="descname">ODKInputConnector</code><span class="sig-paren">(</span><em>user</em>, <em>password</em>, <em>formID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#ODKInputConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.ODKInputConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conector para obtener imagenes del servidor de Open Data Kit</p>
+<dl class="method">
+<dt id="detector_aedes.connectors.ODKInputConnector.get_image">
+<code class="descname">get_image</code><span class="sig-paren">(</span><em>uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#ODKInputConnector.get_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.ODKInputConnector.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve un numpy array con la imagen correspondiente a ese uuid</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.connectors.ODKInputConnector.get_image_ids">
+<code class="descname">get_image_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/connectors.html#ODKInputConnector.get_image_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.connectors.ODKInputConnector.get_image_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve una lista con todas las uuids de imagenes en el servidor</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-detector_aedes.detector_aedes">
+<span id="detector-aedes-detector-aedes-module"></span><h2>detector_aedes.detector_aedes module<a class="headerlink" href="#module-detector_aedes.detector_aedes" title="Permalink to this headline">¶</a></h2>
+<p>One liner</p>
+<p>Description....</p>
+<dl class="class">
+<dt id="detector_aedes.detector_aedes.AedesDetector">
+<em class="property">class </em><code class="descclassname">detector_aedes.detector_aedes.</code><code class="descname">AedesDetector</code><span class="sig-paren">(</span><em>input_connector</em>, <em>output_connector=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/detector_aedes.html#AedesDetector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.detector_aedes.AedesDetector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detector de Huevos en Ovisensores.</p>
+<p><cite>AedesDetector(input_connector, output_connector)</cite>
+Algoritmos de vision computacional para reconocer la presencia de
+huevos en fotos de ovisensores.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>input_connector (:obj:): Conector a la fuente de imagenes a</dt>
+<dd>analizar.</dd>
+<dt>output_connector (:obj:): Conector a la salida de los resulados del</dt>
+<dd>análisis.</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="detector_aedes.detector_aedes.AedesDetector.classify">
+<code class="descname">classify</code><span class="sig-paren">(</span><em>method=u'Threshods'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/detector_aedes.html#AedesDetector.classify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.detector_aedes.AedesDetector.classify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.detector_aedes.AedesDetector.plot_classification">
+<code class="descname">plot_classification</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/detector_aedes.html#AedesDetector.plot_classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.detector_aedes.AedesDetector.plot_classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graficar la clasificacion par una dada imágen</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.detector_aedes.AedesDetector.plot_selector">
+<code class="descname">plot_selector</code><span class="sig-paren">(</span><em>show_mask=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/detector_aedes.html#AedesDetector.plot_selector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.detector_aedes.AedesDetector.plot_selector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graficar los puntos candidatos y permitir al usuario elegir los
+positivos.</p>
+<dl class="docutils">
+<dt>USO:</dt>
+<dd><ul class="first simple">
+<li>Hacer click sobre todos los candidatos considerados positivos</li>
+</ul>
+<p>(van a cambiar de color).</p>
+<ul class="last simple">
+<li>Apretar N para pasar a la imagen siguiente</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.detector_aedes.AedesDetector.process">
+<code class="descname">process</code><span class="sig-paren">(</span><em>image_id=None</em>, <em>show_results=False</em>, <em>start_from=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/detector_aedes.html#AedesDetector.process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.detector_aedes.AedesDetector.process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Función principal para procesar las imágenes disponibles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>image_id</strong> (<em>str, optional</em>) &#8211; Este parametro debe corresponder al ID de
+una imagen. Si está definido se procesa solo esa imagen.</li>
+<li><strong>show_results</strong> (<em>bool, optional</em>) &#8211; Mostrar un gráfico del procesamiento
+para cada imagen a medida que se procesan.</li>
+<li><strong>start_from</strong> (<em>int, optional</em>) &#8211; Comienza a analizar a partir de la
+imagen <cite>start_from</cite>-ésima imagen.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-detector_aedes.image_connectors">
+<span id="detector-aedes-image-connectors-module"></span><h2>detector_aedes.image_connectors module<a class="headerlink" href="#module-detector_aedes.image_connectors" title="Permalink to this headline">¶</a></h2>
+<p>One liner</p>
+<p>Description....</p>
+<dl class="class">
+<dt id="detector_aedes.image_connectors.FolderConnector">
+<em class="property">class </em><code class="descclassname">detector_aedes.image_connectors.</code><code class="descname">FolderConnector</code><span class="sig-paren">(</span><em>base_path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/image_connectors.html#FolderConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.image_connectors.FolderConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conector para obtener imagenes de la carpeta ubicada en base_path</p>
+<dl class="method">
+<dt id="detector_aedes.image_connectors.FolderConnector.get_image">
+<code class="descname">get_image</code><span class="sig-paren">(</span><em>fileid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/image_connectors.html#FolderConnector.get_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.image_connectors.FolderConnector.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve un numpy array con la imagen correspondiente a ese archivo</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.image_connectors.FolderConnector.get_image_ids">
+<code class="descname">get_image_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/image_connectors.html#FolderConnector.get_image_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.image_connectors.FolderConnector.get_image_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve una lista con todas los nombres de archivo de imagenes en
+la carpetas.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="detector_aedes.image_connectors.ODKConnector">
+<em class="property">class </em><code class="descclassname">detector_aedes.image_connectors.</code><code class="descname">ODKConnector</code><span class="sig-paren">(</span><em>user</em>, <em>password</em>, <em>formID</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/image_connectors.html#ODKConnector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.image_connectors.ODKConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conector para obtener imagenes del servidor de Open Data Kit</p>
+<dl class="attribute">
+<dt id="detector_aedes.image_connectors.ODKConnector.BLOBKEY_BASE">
+<code class="descname">BLOBKEY_BASE</code><em class="property"> = u'build_Sensores-SIMAE_1480963445[&#64;version=null and &#64;uiVersion=null]/data[&#64;key=%s]/imagen'</em><a class="headerlink" href="#detector_aedes.image_connectors.ODKConnector.BLOBKEY_BASE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.image_connectors.ODKConnector.URL_BINARYDATA">
+<code class="descname">URL_BINARYDATA</code><em class="property"> = u'http://simae.msgc.gcba/view/binaryData'</em><a class="headerlink" href="#detector_aedes.image_connectors.ODKConnector.URL_BINARYDATA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="detector_aedes.image_connectors.ODKConnector.URL_ENTRIES">
+<code class="descname">URL_ENTRIES</code><em class="property"> = u'http://simae.msgc.gcba/view/submissionList'</em><a class="headerlink" href="#detector_aedes.image_connectors.ODKConnector.URL_ENTRIES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.image_connectors.ODKConnector.get_image">
+<code class="descname">get_image</code><span class="sig-paren">(</span><em>uuid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/image_connectors.html#ODKConnector.get_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.image_connectors.ODKConnector.get_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve un numpy array con la imagen correspondiente a ese uuid</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="detector_aedes.image_connectors.ODKConnector.get_image_ids">
+<code class="descname">get_image_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/detector_aedes/image_connectors.html#ODKConnector.get_image_ids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#detector_aedes.image_connectors.ODKConnector.get_image_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Devuelve una lista con todas las uuids de imagenes en el servidor</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-detector_aedes.old_detector_aedes">
+<span id="detector-aedes-old-detector-aedes-module"></span><h2>detector_aedes.old_detector_aedes module<a class="headerlink" href="#module-detector_aedes.old_detector_aedes" title="Permalink to this headline">¶</a></h2>
+<p>Detector de huevos de Aedes</p>
+<p>Rutinas para identificar la lengueta de madera en fotos de ovitrampas y luego
+detectar la presencia de huevos de mosquito sobre la misma.</p>
+</div>
+<div class="section" id="module-detector_aedes">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-detector_aedes" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Datos Argentina.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
