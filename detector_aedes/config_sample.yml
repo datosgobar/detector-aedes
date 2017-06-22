@@ -1,6 +1,6 @@
 odk:
-  URL_ENTRIES: 'http://ODKHOST/view/submissionList',
-  URL_BINARYDATA: 'http://ODKHOST/view/binaryData',
+  URL_ENTRIES: 'http://ODKHOST/view/submissionList'
+  URL_BINARYDATA: 'http://ODKHOST/view/binaryData'
   BLOBKEY_BASE: 'TABLE_ID[@version=null and @uiVersion=null]/data[@key=%s]/RESOURCE_NAME'
 
 images:
