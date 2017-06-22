@@ -38,6 +38,8 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 else:
+    os.rename(os.path.join(project_root, 'detector_aedes', 'config_sample.yml'),
+              os.path.join(project_root, 'detector_aedes', 'config.yml'))
     html_theme = 'default'
 
 import detector_aedes
