@@ -8,15 +8,19 @@ from __future__ import print_function
 from __future__ import with_statement
 import unittest
 import nose
+import os
 
 import detector_aedes as da
 import numpy as np
 from skimage.io import imread
 
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class DetectorAedesTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.img = imread('./test_data/test_image.png')
+        self.img = imread(os.path.join(TEST_DIR, 'test_data', 'test_image.png'))
 
     def tearDown(self):
         pass
