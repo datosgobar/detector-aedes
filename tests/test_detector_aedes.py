@@ -49,7 +49,11 @@ class DetectorAedesTestCase(unittest.TestCase):
         fsample = open(os.path.join(TEST_DIR, 'test_data', 'sample_test_out.csv'), 'r')
         fout = open(os.path.join(TEST_DIR, 'test_data', 'test_out.csv'), 'r')
         for l1, l2 in zip(fsample.readlines(), fout.readlines()):
-            assert(l1[1:] == l2[1:]) # Ignora el id que depende de la carpeta en que este
+            l1_split = l1.strip().split(',')
+            l2_split = l2.strip().split(',')
+            print(l1_split)
+            print(l2_split)
+            assert(l1_split[1:] == l2_split[1:]) # Ignora el id que depende de la carpeta en que este
         fsample.close()
         fout.close()
 
