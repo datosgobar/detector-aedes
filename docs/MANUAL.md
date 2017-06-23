@@ -21,7 +21,7 @@ La librería cuenta con funciones para dos objetivos principales:
 - **Encontrar un bajalenguas en la imagen**
 - **Buscar Elipses oscuras dentro del bajalenguas**
 
-Para simplificar la interaccion con distintas fuentes de imagenes ambas funciones están incuidas en una clase principal `AedesDetector` que itera sobre todas las fotos y graba la salida del proceso de deteccion. Para de definir cual será la fuente de las imagenes (puede ser por ejemplo una carpeta o un servidor de [Open Data Kit](https://opendatakit.org/)) y cual será la salida (por ahora un archivo o una tabla de *Fusion Tables*). Para leer más en detalle el funcionamiento de los conectores ver la seccion sobre [Ingreso y Egreso de los datos](#Ingreso y Egreso de los datos)
+Para simplificar la interaccion con distintas fuentes de imagenes ambas funciones están incuidas en una clase principal `AedesDetector` que itera sobre todas las fotos y graba la salida del proceso de deteccion. Para de definir cual será la fuente de las imagenes (puede ser por ejemplo una carpeta o un servidor de [Open Data Kit](https://opendatakit.org/)) y cual será la salida (por ahora un archivo o una tabla de *Fusion Tables*). Para leer más en detalle el funcionamiento de los conectores ver la seccion sobre [Ingreso y Egreso de los datos](#ingreso-y-egreso-de-los-datos)
 
 ## Funcionamiento
 
