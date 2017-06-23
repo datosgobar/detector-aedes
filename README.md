@@ -4,7 +4,8 @@
 [![Build Status](https://travis-ci.org/datosgobar/detector-aedes.svg?branch=master)](https://travis-ci.org/datosgobar/detector-aedes)
 [![PyPI](https://badge.fury.io/py/detector-aedes.svg)](http://badge.fury.io/py/detector-aedes)
 [![Stories in Ready](https://badge.waffle.io/datosgobar/detector-aedes.png?label=ready&title=Ready)](https://waffle.io/datosgobar/detector-aedes)
-[![Documentation Status](http://readthedocs.org/projects/detector-aedes/badge/?version=latest)](http://detector-aedes.readthedocs.org/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/detector-aedes/badge/?version=latest)](http://detector-aedes.readthedocs.io/en/latest/?badge=latest)
+
 
 Algoritmos de Visión Computacional para analizar imágenes de Ovisensores. 
 
