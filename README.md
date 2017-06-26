@@ -6,7 +6,7 @@
 [![Stories in Ready](https://badge.waffle.io/datosgobar/detector-aedes.png?label=ready&title=Ready)](https://waffle.io/datosgobar/detector-aedes)
 [![Documentation Status](http://readthedocs.org/projects/detector-aedes/badge/?version=latest)](http://detector-aedes.readthedocs.org/en/latest/?badge=latest)
 
-Algoritmos de Visión Computacional para analizar imágenes de Ovisensores. 
+Algoritmos de Visión Computacional para analizar imágenes de Ovisensores.
 
 
 * Licencia: MIT license
@@ -20,6 +20,8 @@ El paquete se encuentra disponible en pip:
 ```bash
 $ pip install detector_aedes
 ```
+
+Luego buscar la carpeta de instalación y renombrar el archivo config_sample.yml a config.yml
 
 ### Instalacion de Desarrollo
 
@@ -38,6 +40,12 @@ finalmente instalar el paquete en modo desarrollo con:
 ```bash
 $ pip install -e .
 ```
+Luego renombrar el archivo config_sample.yml a config.yml
+
+```bash
+$ mv config_sample.yml config.yml
+```
+
 
 ## Uso
 
