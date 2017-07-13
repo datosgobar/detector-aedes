@@ -51,7 +51,7 @@ status, limits = sah.get_limits()  # obtenemos los limites del bajalenguas
 
 ### Búsqueda de huevos
 
-La busqueda consiste en hacer aplicar una serie de umbrales de brillo a la imagen blanco y negro. Para cada nivel de umbral se buscan las regiones conexas y se chequean una serie de propiedades geométricas (para mas detalle ver el método `find_in` de la clase `EllipseFinder`). Si la region candidata pasa esos primeros filtros se construye una plantilla de un huevo prototípico compatible con esa región y se calcula la correlación entre la plantilla y la región real de la foto. Se calcula también el contraste para la región. Se define como positiva una región cuya correlación y contraste están por encima de los umbrales establecidos.
+La busqueda consiste en aplicar una serie de umbrales de brillo a la imagen blanco y negro. Para cada nivel de umbral se buscan las regiones conexas y se chequean una serie de propiedades geométricas (para mas detalle ver el método `find_in` de la clase `EllipseFinder`). Si la region candidata pasa esos primeros filtros se construye una plantilla de un huevo prototípico compatible con esa región y se calcula la correlación entre la plantilla y la región real de la foto. Se calcula también el contraste para la región. Se define como positiva una región cuya correlación y contraste están por encima de los umbrales establecidos.
 
 #### Regiones conexas de múltiples huevos
 
@@ -60,4 +60,4 @@ Si la región candidata es demasiado grande como para que se trate de un único 
 
 ## Ingreso y Egreso de los datos
 
-Los conectores de entrada y salida sirven como capas de abstracción para permitir interactuar con fuentes de datos que no sean directamente archivos. Para configurar los accesos a un servidor de Open Data Kit se deben completar las credenciales en el archivo
+Los conectores de entrada y salida sirven como capas de abstracción para permitir interactuar con fuentes de datos que no sean directamente archivos. Para configurar los accesos a un servidor de Open Data Kit se deben completar las credenciales en el archivo `config.yml`.
